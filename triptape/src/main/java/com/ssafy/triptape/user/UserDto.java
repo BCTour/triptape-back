@@ -25,10 +25,11 @@ public class UserDto {
 	@Email(message="이메일 타입이어야 합니다.")
 	private String email;
 	private String tel;
-	private List<FileInfoDto> fileInfos;
+	private FileInfoDto profileImg;
 	private String birthday;
 	private int gender;
 	private String joindate;
 	private int isAdmin;
 
+	
 }

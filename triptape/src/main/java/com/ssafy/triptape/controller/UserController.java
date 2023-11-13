@@ -1,6 +1,7 @@
 package com.ssafy.triptape.controller;
 
-import javax.validation.Valid;
+import java.io.IOException;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,7 +11,9 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.triptape.common.codes.SuccessCode;
 import com.ssafy.triptape.common.response.ApiResponse;
@@ -19,6 +22,7 @@ import com.ssafy.triptape.user.service.UserService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @RestController
 @CrossOrigin("*")
@@ -26,14 +30,15 @@ import io.swagger.annotations.ApiOperation;
 @Api(tags="회원 정보 관리 API")
 public class UserController {
 
+	
 	@Autowired
 	private UserService service;
 	
-	@PostMapping("/regist")
+	@PostMapping(value ="/regist", consumes = "multipart/form-data")
 	@ApiOperation("회원가입을 진행합니다.")
-	public ResponseEntity<?> regist(@Validated @RequestBody  UserDto user) {
+	public ResponseEntity<?> regist(@Validated @ApiParam(value = "사용자 정보", required = true) @RequestPart(value="user") UserDto user, @RequestPart(name="file", required = false) MultipartFile file) throws IllegalStateException, IOException {
 		System.out.println(user);
-		int result = service.regist(user);
+		int result = service.regist(user, file);
 		
 		ApiResponse<Object> ar = ApiResponse.builder()
 					.result(result).resultCode(SuccessCode.INSERT_SUCCESS.getStatus())

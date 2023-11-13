@@ -1,4 +1,4 @@
-package com.ssafy.triptape.util;
+package com.ssafy.triptape.common.util;
 
 // jwt 관련 상수
 public class AutoConstants {

@@ -61,7 +61,7 @@ public enum ErrorCode {
 
     
     /* custom error */
-
+    BUSINESS_EXCEPTION_ERROR(200, "B999", "Business Exception Error"),
     // Transaction Insert Error
     INSERT_ERROR(200, "9999", "Insert Transaction Error Exception"),
     // Transaction Update Error
@@ -71,7 +71,8 @@ public enum ErrorCode {
 
     ; // End
 
-    // 에러 코드의 '코드 상태'을 반환한다.
+    
+	// 에러 코드의 '코드 상태'을 반환한다.
     private final int status;
     // 에러 코드의 '코드간 구분 값'을 반환한다.
     private final String divisionCode;

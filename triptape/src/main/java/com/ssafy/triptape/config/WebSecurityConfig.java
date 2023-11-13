@@ -121,7 +121,7 @@ public class WebSecurityConfig {
      *
      * @return CustomLoginSuccessHandler
      */
-    @Bean
+    @Bean 
     public CustomAuthSuccessHandler customLoginSuccessHandler() {
         return new CustomAuthSuccessHandler();
     }

@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,7 +36,6 @@ public class UserController {
 	@PostMapping(value ="/regist", consumes = "multipart/form-data")
 	@ApiOperation("회원가입을 진행합니다.")
 	public ResponseEntity<?> regist(@Validated @ApiParam(value = "사용자 정보", required = true) @RequestPart(value="user") UserDto user, @RequestPart(name="file", required = false) MultipartFile file) throws IllegalStateException, IOException {
-		System.out.println(user);
 		int result = service.regist(user, file);
 		
 		ApiResponse<Object> ar = ApiResponse.builder()
@@ -47,4 +45,18 @@ public class UserController {
 		
 		return new ResponseEntity<>(ar, HttpStatus.OK);
 	}
+	
+//	@PostMapping(value ="/login")
+//	@ApiOperation("회원가입을 진행합니다.")
+//	public ResponseEntity<?> regist(@Validated String id, @Validated String pw) {
+//
+//		UserDto user = service.login(id);
+//		
+//		ApiResponse<Object> ar = ApiResponse.builder()
+//					.result(user).resultCode(SuccessCode.SELECT_SUCCESS.getStatus())
+//					.resultMsg(SuccessCode.SELECT_SUCCESS.getMessage())
+//					.build();
+//		
+//		return new ResponseEntity<>(ar, HttpStatus.OK);
+//	}
 }

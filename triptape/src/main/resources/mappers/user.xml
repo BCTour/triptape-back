@@ -15,5 +15,13 @@
 			#{user.tel}, #{user.profileImg.saveFile}, #{user.birthday}, #{user.gender}
 			, #{user.isAdmin}, #{salt})
 	</insert>
+	
+	<select id="login" resultMap="user">
+		select * from user where id = #{id}
+	</select>
+	
+	<select id="getsalt">
+		select salt from user where id = #{id}
+	</select>
 
 </mapper>

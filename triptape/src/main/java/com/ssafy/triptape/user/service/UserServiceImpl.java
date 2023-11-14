@@ -3,6 +3,7 @@ package com.ssafy.triptape.user.service;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -51,6 +52,15 @@ public class UserServiceImpl implements UserService {
 		user.setPw(hashpw);
 		return repo.regist(user,salt);
 	}
+
+	/**
+     * 로그인 구현체
+     *
+     */
+    @Override
+    public Optional<UserDto> login(String id) {
+        return repo.login(id);
+    }
 
 	
 }

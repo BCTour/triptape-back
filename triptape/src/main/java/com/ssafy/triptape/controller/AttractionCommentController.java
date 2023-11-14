@@ -1,7 +1,9 @@
 package com.ssafy.triptape.controller;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,13 +23,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.triptape.attraction.AttractionComment;
-import com.ssafy.triptape.attraction.AttractionDto;
 import com.ssafy.triptape.attraction.SearchCondition;
 import com.ssafy.triptape.attraction.service.AttractionCommentService;
 import com.ssafy.triptape.attraction.service.AttractionService;
 import com.ssafy.triptape.common.codes.SuccessCode;
 import com.ssafy.triptape.common.response.ApiResponse;
-import com.ssafy.triptape.common.util.PageNavigation;
 import com.ssafy.triptape.user.UserDto;
 import com.ssafy.triptape.user.service.UserService;
 
@@ -45,11 +45,11 @@ public class AttractionCommentController {
 	@Autowired
 	private AttractionCommentService service;
 	
-	@PostMapping(value ="/regist/{attractionKey}") 
+	@PostMapping(value ="/regist") 
 	@ApiOperation("관광지 코멘트를 등록합니다.")
-	public ResponseEntity<?> regist(@PathVariable int attractionKey, @RequestPart(value="attraction") AttractionComment comment) {
-		comment.getAttraction().setAttractionKey(attractionKey);
+	public ResponseEntity<?> regist(@RequestBody AttractionComment comment) {		
 		
+		System.out.println(comment);
 		int result = service.regist(comment);
 		
 		ApiResponse<Object> ar = ApiResponse.builder()
@@ -60,43 +60,50 @@ public class AttractionCommentController {
 		return new ResponseEntity<>(ar, HttpStatus.OK);
 	}
 	 
-	@GetMapping("/search") 
-	@ApiOperation("조건에 해당하는 코멘트 정보를 반환합니다.")
-	public ResponseEntity<?> list(int commentKey, int currentPage){
-		int totalCount = service.getTotalListCount(commentKey);
-		PageNavigation nav = new PageNavigation(currentPage, totalCount);
+	@GetMapping("/search/{attractionKey}") 
+	@ApiOperation("해당하는 코멘트 정보를 반환합니다.")
+	public ResponseEntity<?> search(@PathVariable int attractionKey,@RequestParam int currentPage){
+		int totalCount = service.getTotalListCount(attractionKey);
 		
-		List<AttractionComment> list = service.search(commentKey);
+		int countPerPage = 10;
+		int start = (currentPage - 1) * countPerPage;
+		List<AttractionComment> comment = service.search(attractionKey, start, countPerPage);
+		
+		Map<String, Object> map = new HashMap<>();
+		map.put("comment", comment);
+		map.put("totalCount", totalCount);
+		
 		
 		ApiResponse<Object> ar = ApiResponse.builder()
-				.result(list).resultCode(SuccessCode.SELECT_SUCCESS.getStatus())
+				.result(map).resultCode(SuccessCode.SELECT_SUCCESS.getStatus())
 				.resultMsg(SuccessCode.SELECT_SUCCESS.getMessage())
 				.build();
 	
+		
 		return new ResponseEntity<>(ar, HttpStatus.OK);
 	}
 
 	
-	@PutMapping("/modify/{attractionKey}")
-	@ApiOperation("관광지 상세 정보를 수정합니다.")
-	public ResponseEntity<?> modify(@PathVariable int attractionKey,@RequestBody AttractionDto attraction ){
+	@PutMapping("/modify/{commentKey}")
+	@ApiOperation("코멘트를 수정합니다.")
+	public ResponseEntity<?> modify(@PathVariable int commentKey,@RequestBody AttractionComment comment ){
 
-		attraction.setAttractionKey(attractionKey);
-		AttractionDto ret = service.modify(attraction);
+		comment.setCommentKey(commentKey);
+		int result = service.modify(comment);
 		
 		ApiResponse<Object> ar = ApiResponse.builder()
-				.result(ret).resultCode(SuccessCode.UPDATE_SUCCESS.getStatus())
+				.result(result).resultCode(SuccessCode.UPDATE_SUCCESS.getStatus())
 				.resultMsg(SuccessCode.UPDATE_SUCCESS.getMessage())
 				.build();
 	
 		return new ResponseEntity<>(ar, HttpStatus.OK);
 	}
 	
-	@DeleteMapping("/delete/{attractionKey}")
-	@ApiOperation("관광지 정보를 삭제합니다.")
-	public ResponseEntity<?> delete(@PathVariable int attractionKey){
+	@DeleteMapping("/delete/{commentKey}")
+	@ApiOperation("코멘트 정보를 삭제합니다.")
+	public ResponseEntity<?> delete(@PathVariable int commentKey){
 
-		int result = service.delete(attractionKey);
+		int result = service.delete(commentKey);
 		
 		ApiResponse<Object> ar = ApiResponse.builder()
 				.result(result).resultCode(SuccessCode.DELETE_SUCCESS.getStatus())

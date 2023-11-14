@@ -8,7 +8,7 @@ import com.ssafy.triptape.attraction.AttractionComment;
 
 @Mapper
 public interface AttractionCommentRepo {
-	List<AttractionComment> search(int attractionKey);
+	List<AttractionComment> search(int attractionKey,int start, int countPerPage);
 	int regist(AttractionComment comment);
 	int getTotalListCount(int attractionKey);
 	

@@ -16,7 +16,8 @@ import lombok.ToString;
 public class AttractionComment {
 	private int commentKey;
 	private UserDto user;
-	private AttractionDto attraction;
+	private int attractionKey;
 	private String content;
 	private String createtime;
+
 }

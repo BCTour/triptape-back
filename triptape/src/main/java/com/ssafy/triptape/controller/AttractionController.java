@@ -1,7 +1,9 @@
 package com.ssafy.triptape.controller;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,9 +26,6 @@ import com.ssafy.triptape.attraction.SearchCondition;
 import com.ssafy.triptape.attraction.service.AttractionService;
 import com.ssafy.triptape.common.codes.SuccessCode;
 import com.ssafy.triptape.common.response.ApiResponse;
-import com.ssafy.triptape.common.util.PageNavigation;
-import com.ssafy.triptape.user.UserDto;
-import com.ssafy.triptape.user.service.UserService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -57,16 +56,18 @@ public class AttractionController {
 	 
 	@GetMapping("/search") 
 	@ApiOperation("조건에 해당하는 관광지 정보를 반환합니다.")
-	public ResponseEntity<?> list(SearchCondition search){
+	public ResponseEntity<?> search(SearchCondition search){
 		int totalCount = service.getTotalListCount(search);
-		PageNavigation nav = new PageNavigation(search.getCurrentPage(), totalCount);
-		
+
 		List<AttractionDto> list = service.search(search);
 		quickSort(list, 0, list.size() - 1, search.getLatitude(), search.getLongitude());
 		
+		Map<String, Object> map = new HashMap<>();
+		map.put("attraction", list);
+		map.put("totalCount", totalCount);
 		
 		ApiResponse<Object> ar = ApiResponse.builder()
-				.result(list).resultCode(SuccessCode.SELECT_SUCCESS.getStatus())
+				.result(map).resultCode(SuccessCode.SELECT_SUCCESS.getStatus())
 				.resultMsg(SuccessCode.SELECT_SUCCESS.getMessage())
 				.build();
 	
@@ -109,6 +110,8 @@ public class AttractionController {
 	public ResponseEntity<?> delete(@PathVariable int attractionKey){
 
 		int result = service.delete(attractionKey);
+		
+		if(result != 1) return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		
 		ApiResponse<Object> ar = ApiResponse.builder()
 				.result(result).resultCode(SuccessCode.DELETE_SUCCESS.getStatus())

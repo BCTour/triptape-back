@@ -18,8 +18,8 @@ public class AttractionCommentServiceImpl implements AttractionCommentService {
 	AttractionCommentRepo repo;
 
 	@Override
-	public List<AttractionComment> search(int attractionKey) {
-		return repo.search(attractionKey);
+	public List<AttractionComment> search(int attractionKey, int start, int countPerPage) {
+		return repo.search(attractionKey, start, countPerPage);
 	}
 
 	@Override

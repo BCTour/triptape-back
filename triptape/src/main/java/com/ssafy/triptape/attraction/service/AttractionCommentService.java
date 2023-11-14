@@ -9,7 +9,7 @@ import com.ssafy.triptape.attraction.AttractionTypeDto;
 import com.ssafy.triptape.attraction.SearchCondition;
 
 public interface AttractionCommentService {
-	List<AttractionComment> search(int attractionKey);
+	List<AttractionComment> search(int attractionKey,int start, int countPerPage);
 	int regist(AttractionComment comment);
 	int getTotalListCount(int attractionKey);
 	

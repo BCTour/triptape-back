@@ -2,21 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ssafy.triptape.attraction.repo.AttractionCommentRepo">
 	
-	<resultMap type="com.ssafy.triptape.attraction.AttractionDto" id="attraction">
-		<id column="attraction_key" property="attractionKey" />
-		<result column="name" property="name" />
-		<result column="address" property="address"/>
-		<result column="latitude" property="latitude"/>
-		<result column="longitude" property="longitude"/>
-		<result column="description" property="description"/>
-		<association property="attractionType" javaType="com.ssafy.triptape.attraction.AttractionTypeDto">
-			<result column="type_code" property="typeCode" />
-			<result column="type_name" property="typeName" />
-		</association>
-		<association property="img" javaType="com.ssafy.triptape.file.FileInfoDto">
-			<result column="img" property="saveFile"  />
-		</association>
-	</resultMap>
 	
 	<resultMap type="com.ssafy.triptape.user.UserDto" id="user">
 		<id property="userKey" column="user_key" />
@@ -30,36 +15,36 @@
 		<id column="comment_key" property="commentKey" />
 		<result column="content" property="content"/>
 		<result column="createtime" property="createtime"/>
-		<result column="description" property="description"/>
-		
+		<result column="attraction_key" property="attractionKey" />
 		<collection property="user" resultMap="user" />
-		<collection property="attraction" resultMap="attraction"></collection>
 	</resultMap>
 	
 
 	<insert id="regist">
-		insert into attraction_comment(comment_key, user_key, attraction_key, content, createtime)
-		values(#{commentKey}, #{user.userKey}, #{attraction.attractionKey}, #{content}, #{createtime})
+		insert into attraction_comment(user_key, attraction_key, content)
+		values(#{user.userKey}, #{attractionKey}, #{content})
 	</insert>
 
 	<select id="search" resultMap="comment">
 		select  * from attraction_comment a 
 					join attraction_info b on a.attraction_key = b.attraction_key
-					join user_info c on a.user_key = c.user_key
-		limit ${offset}, ${countPerPage}
-		order by createtime desc
+					join user c on a.user_key = c.user_key
+		where a.attraction_key=#{attractionKey}
+		order by a.createtime desc
+		limit ${start}, ${countPerPage}
 	</select>
 
 	
 	<select id="getTotalListCount" resultType="int">
-		select  * from attraction_comment a 
+		select count(*) from attraction_comment a 
 					join attraction_info b on a.attraction_key = b.attraction_key
-					join user_info c on a.user_key = c.user_key
+					join user c on a.user_key = c.user_key
+		where a.attraction_key=#{attractionKey}
 	</select>	
 	
 	<update id="modify">
 		update attraction_comment
-		set content = #{name}
+		set content = #{content}
 		where comment_key=#{commentKey}
 	</update>
 	

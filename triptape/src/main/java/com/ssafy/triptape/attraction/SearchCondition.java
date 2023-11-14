@@ -1,5 +1,7 @@
 package com.ssafy.triptape.attraction;
 
+
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -31,7 +33,7 @@ public class SearchCondition {
 	@ApiModelProperty("현재 페이지")
 	private int currentPage = 1;
 
-	public int getOffset() {
+	public int getStart() {
 		return (this.currentPage - 1) * countPerPage;
 	}
 }

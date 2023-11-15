@@ -23,11 +23,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.triptape.attraction.AttractionComment;
+import com.ssafy.triptape.attraction.AttractionDto;
 import com.ssafy.triptape.attraction.SearchCondition;
 import com.ssafy.triptape.attraction.service.AttractionCommentService;
 import com.ssafy.triptape.attraction.service.AttractionService;
-import com.ssafy.triptape.common.codes.SuccessCode;
-import com.ssafy.triptape.common.response.ApiResponse;
 import com.ssafy.triptape.user.UserDto;
 import com.ssafy.triptape.user.service.UserService;
 
@@ -49,15 +48,13 @@ public class AttractionCommentController {
 	@ApiOperation("관광지 코멘트를 등록합니다.")
 	public ResponseEntity<?> regist(@RequestBody AttractionComment comment) {		
 		
-		System.out.println(comment);
-		int result = service.regist(comment);
-		
-		ApiResponse<Object> ar = ApiResponse.builder()
-					.result(result).resultCode(SuccessCode.INSERT_SUCCESS.getStatus())
-					.resultMsg(SuccessCode.INSERT_SUCCESS.getMessage())
-					.build();
-		
-		return new ResponseEntity<>(ar, HttpStatus.OK);
+		try {
+			int result = service.regist(comment);
+			if(result==1) return new ResponseEntity<Void>(HttpStatus.CREATED);
+			else return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch(Exception e) {
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 	 
 	@GetMapping("/search/{attractionKey}") 
@@ -67,20 +64,27 @@ public class AttractionCommentController {
 		
 		int countPerPage = 10;
 		int start = (currentPage - 1) * countPerPage;
-		List<AttractionComment> comment = service.search(attractionKey, start, countPerPage);
 		
-		Map<String, Object> map = new HashMap<>();
-		map.put("comment", comment);
-		map.put("totalCount", totalCount);
+		Map<String, Object> result = new HashMap<>();
 		
-		
-		ApiResponse<Object> ar = ApiResponse.builder()
-				.result(map).resultCode(SuccessCode.SELECT_SUCCESS.getStatus())
-				.resultMsg(SuccessCode.SELECT_SUCCESS.getMessage())
-				.build();
-	
-		
-		return new ResponseEntity<>(ar, HttpStatus.OK);
+		HttpStatus status = HttpStatus.ACCEPTED;
+		try {
+			List<AttractionComment> comment = service.search(attractionKey, start, countPerPage);
+			
+			result.put("comment", comment);
+			result.put("totalCount", totalCount);
+			
+			if(comment != null) {
+				status = HttpStatus.OK;
+			} else { 
+				result.put("message", "반환할 데이터가 없습니다.");
+				status = HttpStatus.NO_CONTENT;
+			}
+		} catch(Exception e) {
+			result.put("message", e.getMessage());
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
+		}
+		return new ResponseEntity<Map<String,Object>>(result, status);
 	}
 
 	
@@ -89,28 +93,29 @@ public class AttractionCommentController {
 	public ResponseEntity<?> modify(@PathVariable int commentKey,@RequestBody AttractionComment comment ){
 
 		comment.setCommentKey(commentKey);
-		int result = service.modify(comment);
 		
-		ApiResponse<Object> ar = ApiResponse.builder()
-				.result(result).resultCode(SuccessCode.UPDATE_SUCCESS.getStatus())
-				.resultMsg(SuccessCode.UPDATE_SUCCESS.getMessage())
-				.build();
+		try {
+			int result = service.modify(comment);
+			if(result==1) return new ResponseEntity<Void>(HttpStatus.OK);
+			else return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch(Exception e) {
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	
-		return new ResponseEntity<>(ar, HttpStatus.OK);
 	}
 	
 	@DeleteMapping("/delete/{commentKey}")
 	@ApiOperation("코멘트 정보를 삭제합니다.")
 	public ResponseEntity<?> delete(@PathVariable int commentKey){
-
-		int result = service.delete(commentKey);
 		
-		ApiResponse<Object> ar = ApiResponse.builder()
-				.result(result).resultCode(SuccessCode.DELETE_SUCCESS.getStatus())
-				.resultMsg(SuccessCode.DELETE_SUCCESS.getMessage())
-				.build();
+		try {
+			int result = service.delete(commentKey);
+			if(result==1) return new ResponseEntity<Void>(HttpStatus.OK);
+			else return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch(Exception e) {
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	
-		return new ResponseEntity<>(ar, HttpStatus.OK);
 	}
 	
 }

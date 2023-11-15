@@ -9,7 +9,7 @@ import com.ssafy.triptape.user.UserDto;
 
 @Mapper
 public interface UserRepo {
-	int regist(UserDto user, String salt);
+	int regist(UserDto user, String salt) ;
 	UserDto login(String userId, String userPw); 
 	UserDto userInfo(String userId);
 	void saveRefreshToken(String userId, String refreshToken);

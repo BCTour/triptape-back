@@ -24,8 +24,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.ssafy.triptape.attraction.AttractionDto;
 import com.ssafy.triptape.attraction.SearchCondition;
 import com.ssafy.triptape.attraction.service.AttractionService;
-import com.ssafy.triptape.common.codes.SuccessCode;
-import com.ssafy.triptape.common.response.ApiResponse;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -44,34 +42,43 @@ public class AttractionController {
 	@PostMapping(value ="/regist", consumes = "multipart/form-data") 
 	@ApiOperation("관광지를 등록합니다.")
 	public ResponseEntity<?> regist(@Validated @ApiParam(value = "관광지 정보", required = true) @RequestPart(value="attraction") AttractionDto attraction, @RequestPart(name="file", required = false) MultipartFile file) throws IllegalStateException, IOException {
-		int result = service.regist(attraction, file);
 		
-		ApiResponse<Object> ar = ApiResponse.builder()
-					.result(result).resultCode(SuccessCode.INSERT_SUCCESS.getStatus())
-					.resultMsg(SuccessCode.INSERT_SUCCESS.getMessage())
-					.build();
-		
-		return new ResponseEntity<>(ar, HttpStatus.OK);
+		try {
+			int result = service.regist(attraction, file);
+			if(result==1) return new ResponseEntity<Void>(HttpStatus.CREATED);
+			else return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch(Exception e) {
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 	 
 	@GetMapping("/search") 
 	@ApiOperation("조건에 해당하는 관광지 정보를 반환합니다.")
 	public ResponseEntity<?> search(SearchCondition search){
-		int totalCount = service.getTotalListCount(search);
+		Map<String, Object> result = new HashMap<>();
+		HttpStatus status = HttpStatus.ACCEPTED;
+		
+		try {
+			int totalCount = service.getTotalListCount(search);
 
-		List<AttractionDto> list = service.search(search);
-		quickSort(list, 0, list.size() - 1, search.getLatitude(), search.getLongitude());
-		
-		Map<String, Object> map = new HashMap<>();
-		map.put("attraction", list);
-		map.put("totalCount", totalCount);
-		
-		ApiResponse<Object> ar = ApiResponse.builder()
-				.result(map).resultCode(SuccessCode.SELECT_SUCCESS.getStatus())
-				.resultMsg(SuccessCode.SELECT_SUCCESS.getMessage())
-				.build();
-	
-		return new ResponseEntity<>(ar, HttpStatus.OK);
+			List<AttractionDto> list = service.search(search);
+			
+			if(list != null) {
+				quickSort(list, 0, list.size() - 1, search.getLatitude(), search.getLongitude());
+				
+				result.put("attraction", list);
+				result.put("totalCount", totalCount);
+				
+				status = HttpStatus.OK;
+			} else {
+				result.put("message", "반환할 데이터가 없습니다.");
+				status = HttpStatus.NO_CONTENT;
+			}
+		} catch(Exception e) {
+			result.put("message", e.getMessage());
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
+		}
+		return new ResponseEntity<Map<String, Object>>(result, status);
 	}
 	
 	
@@ -79,46 +86,51 @@ public class AttractionController {
 	@ApiOperation("관광지 상세 정보를 반환합니다.")
 	public ResponseEntity<?> info(@PathVariable int attractionKey ){
 
-		AttractionDto attraction = service.info(attractionKey);
+		String result;
+		HttpStatus status = HttpStatus.ACCEPTED;
+		try {
+			AttractionDto attraction = service.info(attractionKey);
+			
+			if(attraction != null) {
+				return new ResponseEntity<AttractionDto>(attraction, HttpStatus.OK);
+			} else { 
+				result = "반환할 데이터가 없습니다.";
+				status = HttpStatus.NO_CONTENT;
+			}
+		} catch(Exception e) {
+			result = e.getMessage();
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
+		}
+		return new ResponseEntity<String>(result, status);
 		
-		ApiResponse<Object> ar = ApiResponse.builder()
-				.result(attraction).resultCode(SuccessCode.SELECT_SUCCESS.getStatus())
-				.resultMsg(SuccessCode.SELECT_SUCCESS.getMessage())
-				.build();
-	
-		return new ResponseEntity<>(ar, HttpStatus.OK);
 	}
 	
 	
 	@PutMapping("/modify/{attractionKey}")
 	@ApiOperation("관광지 상세 정보를 수정합니다.")
 	public ResponseEntity<?> modify(@PathVariable int attractionKey,@RequestBody AttractionDto attraction ){
-
-		attraction.setAttractionKey(attractionKey);
-		AttractionDto ret = service.modify(attraction);
-		
-		ApiResponse<Object> ar = ApiResponse.builder()
-				.result(ret).resultCode(SuccessCode.UPDATE_SUCCESS.getStatus())
-				.resultMsg(SuccessCode.UPDATE_SUCCESS.getMessage())
-				.build();
 	
-		return new ResponseEntity<>(ar, HttpStatus.OK);
+		try {
+			attraction.setAttractionKey(attractionKey);
+			AttractionDto ret = service.modify(attraction);
+			return new ResponseEntity<AttractionDto>(ret, HttpStatus.OK);
+		} catch(Exception e) {
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 	
 	@DeleteMapping("/delete/{attractionKey}")
 	@ApiOperation("관광지 정보를 삭제합니다.")
 	public ResponseEntity<?> delete(@PathVariable int attractionKey){
 
-		int result = service.delete(attractionKey);
-		
-		if(result != 1) return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-		
-		ApiResponse<Object> ar = ApiResponse.builder()
-				.result(result).resultCode(SuccessCode.DELETE_SUCCESS.getStatus())
-				.resultMsg(SuccessCode.DELETE_SUCCESS.getMessage())
-				.build();
-	
-		return new ResponseEntity<>(ar, HttpStatus.OK);
+		try {
+			int result = service.delete(attractionKey);
+			if(result==1) return new ResponseEntity<Void>(HttpStatus.OK);
+			else return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch(Exception e) {
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
 	}
 	
 	

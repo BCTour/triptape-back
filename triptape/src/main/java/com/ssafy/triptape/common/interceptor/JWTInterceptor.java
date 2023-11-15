@@ -30,10 +30,8 @@ public class JWTInterceptor implements HandlerInterceptor {
 		final String token = request.getHeader(HEADER_AUTH);
 
 		if (token != null && jwtUtil.checkToken(token)) {
-			log.info("토큰 사용 가능 : {}", token);
 			return true;
 		} else {
-			log.info("토큰 사용 불가능 : {}", token);
 			throw new UnAuthorizedException();
 		}
 

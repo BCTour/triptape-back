@@ -47,7 +47,8 @@ public class WebConfiguration implements WebMvcConfigurer {
 		registry.addInterceptor(jwtInterceptor)
 		.excludePathPatterns("/swagger-ui/**", "/swagger-resources/**","/v2/api-docs")
 		.excludePathPatterns("/user/login")
-		.excludePathPatterns("/user/regist");
+		.excludePathPatterns("/user/regist")
+		.excludePathPatterns("/attraction/search");
 	}
 
 //	Swagger UI 실행시 404처리

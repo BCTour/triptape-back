@@ -18,6 +18,6 @@ public interface UserService {
 	
 	int modify(UserDto user, MultipartFile file) throws IOException;
 	int deleteUser(String userId, String userPw);
-	
+	void updatePw(String userId, String userPw);
 	UserDto searchByEmail(String email);
 }

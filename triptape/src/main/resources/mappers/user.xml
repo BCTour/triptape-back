@@ -65,5 +65,12 @@
 	</update>
 	<select id="searchByEmail" resultMap="user">
 		select * from user where email = #{email}
-	</select>	
+	</select>
+	
+	<update id="updatePw">
+		update user
+		   set user_pw = #{userPw},
+		   	   salt = #{salt}
+		 where user_id=#{userId}
+	</update>	
 </mapper>

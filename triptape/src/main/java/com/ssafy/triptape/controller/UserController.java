@@ -241,11 +241,11 @@ public class UserController {
 	
 	@GetMapping("/email")
 	public ResponseEntity<?> emailCheck(@RequestParam String email) {
-		
-		UserDto user = service.searchByEmail(email);
+			
 		HttpStatus status = HttpStatus.ACCEPTED;
 		Map<String, Object> resultMap = new HashMap<>();
 		try {
+			UserDto user = service.searchByEmail(email);
 			if(user != null) {
 				String code = emailService.sendSimpleMessage(email);
 				resultMap.put("code", code);
@@ -261,4 +261,26 @@ public class UserController {
 		return new ResponseEntity<Map<String, Object>>(resultMap, status);
 	}
 
+	
+	@PutMapping("/regist/pw")
+	public ResponseEntity<?> registPw(@RequestBody UserDto user) {
+		
+		HttpStatus status = HttpStatus.ACCEPTED;
+		Map<String, Object> resultMap = new HashMap<>();
+		try {
+			UserDto userInfo = service.searchByEmail(user.getEmail());
+			if(user != null) {
+				service.updatePw(userInfo.getUserId(), user.getUserPw());
+				resultMap.put("message", "비밀번호 재설정을 완료하였습니다.");
+				status = HttpStatus.OK;
+			} else {
+				resultMap.put("message", "존재하지 않는 이메일입니다");
+				status = HttpStatus.UNAUTHORIZED;
+			}
+		} catch(Exception e) {
+			resultMap.put("message", e.getMessage());
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
+		}
+		return new ResponseEntity<Map<String, Object>>(resultMap, status);
+	}
 }

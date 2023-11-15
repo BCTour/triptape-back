@@ -19,6 +19,6 @@ public interface UserRepo {
 	UserDto searchByEmail(String email);
 	int modifyUser(UserDto user);
 	int deleteUser(String userId, String userPw);
-//	int resetPw(String id, String pw);
+	void updatePw(String userId, String userPw, String salt);
 	String getSalt(String userId);
 }

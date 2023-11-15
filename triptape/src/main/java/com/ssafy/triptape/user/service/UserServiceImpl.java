@@ -113,4 +113,12 @@ public class UserServiceImpl implements UserService {
 	public UserDto searchByEmail(String email) {
 		return repo.searchByEmail(email);
 	}
+
+	@Override
+	public void updatePw(String userId, String userPw) {
+		String salt = BCrypt.gensalt(12);
+		String hashpw = BCrypt.hashpw(userPw, salt);
+
+		repo.updatePw(userId, hashpw, salt);
+	}
 }

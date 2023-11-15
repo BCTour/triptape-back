@@ -30,8 +30,6 @@ public class UserDto {
 	private String userPw;
 	@ApiModelProperty(value = "이름")
 	private String userName;
-	@ApiModelProperty(value = "닉네임")
-	private String nickname;
 	@Email(message="이메일 타입이어야 합니다.")
 	@ApiModelProperty(value = "이메일")
 	private String email;

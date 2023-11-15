@@ -28,8 +28,9 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private UserRepo repo;
 	
+	private String path = "classpath:static/resources/upload/user";
 	private void fileHandling(UserDto user, MultipartFile file) throws IOException {
-		String path = "classpath:static/resources/upload/user";
+		
 		Resource res = resLoader.getResource(path);
 		if (file != null && file.getSize() > 0) {
 			FileInfoDto fileInfo = new FileInfoDto();
@@ -66,8 +67,16 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public UserDto userInfo(String userId) {
-		return repo.userInfo(userId);
+	public UserDto userInfo(String userId) throws IOException {
+		UserDto user = repo.userInfo(userId);
+		String img = resLoader.getResource(path).getFile().getCanonicalPath() + "/" + user.getProfileImg().getSaveFile();
+		
+		FileInfoDto fileInfo = new FileInfoDto();
+		fileInfo.setSaveFolder(path);
+		fileInfo.setSaveFile(img);
+		
+		user.setProfileImg(fileInfo);
+		return user;
 	}
 
 	@Override
@@ -83,6 +92,33 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void deleteRefreshToken(String userId) {
+		
 		repo.deleteRefreshToken(userId);	
+	}
+
+	@Override
+	public int deleteUser(String userId, String userPw) {
+		String salt = repo.getSalt(userId);
+		String hashPass = BCrypt.hashpw(userPw, salt);
+		return repo.deleteUser(userId, hashPass);
+	}
+
+	@Override
+	public int modify(UserDto user, MultipartFile file) throws IOException {
+		fileHandling(user, file);
+		return repo.modifyUser(user);
+	}
+
+	@Override
+	public UserDto searchByEmail(String email) {
+		return repo.searchByEmail(email);
+	}
+
+	@Override
+	public void updatePw(String userId, String userPw) {
+		String salt = BCrypt.gensalt(12);
+		String hashpw = BCrypt.hashpw(userPw, salt);
+
+		repo.updatePw(userId, hashpw, salt);
 	}
 }

@@ -11,8 +11,13 @@ import com.ssafy.triptape.user.UserDto;
 public interface UserService {
 	int regist(UserDto user, MultipartFile file) throws IOException;
 	UserDto login(String userId, String userPw); 
-	UserDto userInfo(String userId);
+	UserDto userInfo(String userId) throws IOException;
 	void saveRefreshToken(String userId, String refreshToken);
 	Object getRefreshToken(String userId);
 	void deleteRefreshToken(String userId);
+	
+	int modify(UserDto user, MultipartFile file) throws IOException;
+	int deleteUser(String userId, String userPw);
+	void updatePw(String userId, String userPw);
+	UserDto searchByEmail(String email);
 }

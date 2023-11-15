@@ -16,9 +16,9 @@ public interface UserRepo {
 	Object getRefreshToken(String userId);
 	void deleteRefreshToken(String userId);
 	
-//	public UserDto searchUser(String key, String value);
-//	public int modifyUser(UserDto user, String salt);
-//	int deleteUser(String id);
-//	int resetPw(String id, String pw);
+	UserDto searchByEmail(String email);
+	int modifyUser(UserDto user);
+	int deleteUser(String userId, String userPw);
+	void updatePw(String userId, String userPw, String salt);
 	String getSalt(String userId);
 }

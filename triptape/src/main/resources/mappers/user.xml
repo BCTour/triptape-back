@@ -5,7 +5,6 @@
 		<result property="userId" column="user_id"/>
 		<result property="userPw" column="user_pw"/>
 		<result property="userName" column="user_name"/>
-		<result property="nickname" column="nickname"/>
 		<result property="email" column="email"/>
 		<result property="tel" column="tel"/>
 		<result property="birthday" column="birthday"/>
@@ -18,8 +17,8 @@
 	</resultMap>
 
 	<insert id="regist">
-		insert into user(user_id, user_pw, user_name, nickname, email, tel, profile_img, birthday, gender, is_admin, salt) 
-		values(#{user.userId}, #{user.userPw}, #{user.userName}, #{user.nickname}, #{user.email}, 
+		insert into user(user_id, user_pw, user_name, email, tel, profile_img, birthday, gender, is_admin, salt) 
+		values(#{user.userId}, #{user.userPw}, #{user.userName},  #{user.email}, 
 			#{user.tel}, #{user.profileImg.saveFile}, #{user.birthday}, #{user.gender}
 			, #{user.isAdmin}, #{salt})
 	</insert>
@@ -49,4 +48,29 @@
 	<delete id="deleteRefreshToken">
 		delete from token where user_Id=#{userId}
 	</delete>
+	
+	<delete id="deleteUser">
+		delete from user where user_id = #{userId} and user_pw = #{userPw}
+	</delete>
+	
+	<update id="modifyUser">
+		update user
+		   set user_name = #{userName},
+		   	   email = #{email},
+		   	   tel = #{tel},
+		   	   profile_img=#{profileImg.saveFile},
+		   	   birthday=#{birthday},
+		   	   gender=#{gender}
+		 where user_id=#{userId}   
+	</update>
+	<select id="searchByEmail" resultMap="user">
+		select * from user where email = #{email}
+	</select>
+	
+	<update id="updatePw">
+		update user
+		   set user_pw = #{userPw},
+		   	   salt = #{salt}
+		 where user_id=#{userId}
+	</update>	
 </mapper>

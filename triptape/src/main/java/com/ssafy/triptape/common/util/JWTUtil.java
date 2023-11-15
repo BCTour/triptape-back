@@ -89,7 +89,7 @@ public class JWTUtil {
 			log.debug("claims: {}", claims);
 			return true;
 		} catch (Exception e) {
-			log.error(e.getMessage());
+//			log.error(e.getMessage());
 			return false;
 		}
 	}

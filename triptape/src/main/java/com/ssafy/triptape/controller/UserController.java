@@ -13,9 +13,11 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -85,7 +87,7 @@ public class UserController {
 			Object token = service.getRefreshToken(user.getUserId());
 			// 토큰이 존재하는 경우
 			if(token != null) {
-				jwtUtil.checkToken()
+				service.deleteRefreshToken(user.getUserId());
 			}
 			
 			if(loginUser != null) {
@@ -122,8 +124,12 @@ public class UserController {
 			try {
 //				로그인 사용자 정보.
 				UserDto user = service.userInfo(userId);
-				resultMap.put("userInfo", user);
-				status = HttpStatus.OK;
+				if(user != null) {
+					resultMap.put("userInfo", user);
+					status = HttpStatus.OK;
+				} else {
+					status = HttpStatus.NO_CONTENT;
+				}
 		
 			} catch (Exception e) {
 				resultMap.put("message", e.getMessage());
@@ -150,6 +156,9 @@ public class UserController {
 				String accessToken = jwtUtil.createAccessToken(user.getUserId());
 				resultMap.put("access-token", accessToken);
 				status = HttpStatus.CREATED;
+			} else {
+				status = HttpStatus.UNAUTHORIZED;
+				resultMap.put("message", "리프레시 토큰을 사용할 수 없습니다.");
 			}
 		} else {
 			status = HttpStatus.UNAUTHORIZED;
@@ -160,7 +169,7 @@ public class UserController {
 		
 	}
 	
-	@ApiOperation(value = "로그아웃", notes = "회원 정보를 담은 Token을 제거한다.", response = Map.class)
+	@ApiOperation(value = "로그아웃", notes = "회원 정보를 담은 Token을 제거한다.")
 	@GetMapping("/logout/{userId}")
 	public ResponseEntity<?> removeToken(@PathVariable ("userId") @ApiParam(value = "로그아웃할 회원의 아이디.", required = true) String userId) {
 		Map<String, Object> resultMap = new HashMap<>();
@@ -176,4 +185,51 @@ public class UserController {
 		return new ResponseEntity<Map<String, Object>>(resultMap, status);
 	}
 	
+	@ApiOperation(value ="회원 정보 삭제", notes = "회원 정보를 삭제한다.", response = Map.class)
+	@DeleteMapping("/delete")
+	public ResponseEntity<?> delete(@RequestBody UserDto user) {
+		HttpStatus status = HttpStatus.ACCEPTED;
+		Map<String, Object> resultMap = new HashMap<>();
+
+		try {
+			int result = service.deleteUser(user.getUserId(), user.getUserPw());
+			if(result == 1) {
+				resultMap.put("message", "삭제가 완료되었습니다.");
+			}
+			else {
+				resultMap.put("message", "아이디 또는 패스워드를 확인해주세요.");
+				status = HttpStatus.UNAUTHORIZED;
+			}
+		} catch (Exception e) {
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
+			resultMap.put("message", e.getMessage());
+		}
+		
+		return new ResponseEntity<Map<String, Object>>(resultMap, status);
+	}
+	
+	@ApiOperation(value ="회원 정보 수정", notes = "회원 정보를 수정한다.", consumes = "multipart/form-data")
+	@PutMapping("/modify")
+	public ResponseEntity<?> modify(@ApiParam(value = "사용자 정보", required = true) @RequestPart(value="user") UserDto user, @RequestPart(name="file", required = false) MultipartFile file) {
+		HttpStatus status = HttpStatus.ACCEPTED;
+		Map<String, Object> resultMap = new HashMap<>();
+
+		try {
+			int result = service.modify(user, file);
+			if(result == 1) {
+				UserDto userInfo = service.userInfo(user.getUserId());
+				status = HttpStatus.OK;
+				resultMap.put("userInfo", userInfo);
+			}
+			else {
+				resultMap.put("message", "수정 중 오류가 발생했습니다.");
+				status = HttpStatus.UNAUTHORIZED;
+			}
+		} catch (Exception e) {
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
+			resultMap.put("message", e.getMessage());
+		}
+		
+		return new ResponseEntity<Map<String, Object>>(resultMap, status);
+	}
 }

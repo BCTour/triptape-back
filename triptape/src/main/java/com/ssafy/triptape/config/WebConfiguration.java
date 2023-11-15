@@ -31,14 +31,14 @@ public class WebConfiguration implements WebMvcConfigurer {
 //		Set max age to 1800 seconds (30 minutes).
 		registry
 			.addMapping("/**")
-			.allowedOrigins("*")
-//			.allowedOrigins("http://localhost:8080", "http://localhost:5173", "http://localhost:5174")
+//			.allowedOrigins("*")
+			.allowedOrigins("http://localhost:8080", "http://localhost:5173", "http://localhost:5174")
 			.allowedMethods(HttpMethod.GET.name(), HttpMethod.POST.name(), HttpMethod.PUT.name(),
 						HttpMethod.DELETE.name(), HttpMethod.HEAD.name(), HttpMethod.OPTIONS.name(),
 						HttpMethod.PATCH.name())
 			.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH", "HEAD")
-//			.allowCredentials(true)
-//			.exposedHeaders("*")
+			.allowCredentials(true)
+			.exposedHeaders("*")
 			.maxAge(1800); // Pre-flight Caching
 	}
 

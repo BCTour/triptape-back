@@ -20,6 +20,7 @@ public enum SuccessCode {
     // 삽입 성공 코드 (HTTP Response: 201 Created)
     INSERT_SUCCESS(201, "201", "INSERT SUCCESS"),
     
+    // 내용 없음
     NO_CONTENT(204, "204", "NO CONTENT")
     ; // End
 

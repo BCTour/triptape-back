@@ -61,7 +61,7 @@ public enum ErrorCode {
     // 서버가 처리 할 방법을 모르는 경우 발생
     INTERNAL_SERVER_ERROR(500, "G999", "Internal Server Error Exception"),
 
-    DUPLICATE_KEY_ERROR(500, "G999", "중복된 값이 입력되었습니다.")
+    DUPLICATE_KEY_ERROR(500, "G999", "이미 존재하는 값입니다.")
     
     ; // End
 

@@ -51,7 +51,6 @@ public class UserController {
 	@PostMapping(value ="/regist", consumes = "multipart/form-data")
 	@ApiOperation("회원가입을 진행합니다.")
 	public ResponseEntity<?> regist(@Validated @ApiParam(value = "사용자 정보", required = true) @RequestPart(value="user") UserDto user, @RequestPart(name="file", required = false) MultipartFile file) throws IllegalStateException, IOException {
-		System.out.println(user);
 		HttpStatus status = HttpStatus.ACCEPTED;
 		String message ="";
 		
@@ -97,6 +96,7 @@ public class UserController {
 			}
 		} catch(Exception e) {
 			resultMap.put("message", e.getMessage());
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
 		}
 		return new ResponseEntity<Map<String, Object>>(resultMap, status);
 	}

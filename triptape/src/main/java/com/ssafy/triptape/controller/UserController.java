@@ -74,12 +74,20 @@ public class UserController {
 	@PostMapping(value ="/login")
 	@ApiOperation("로그인을 진행합니다.")
 	public ResponseEntity<?> login(@RequestBody UserDto user) {
-
-		UserDto loginUser = service.login(user.getUserId(), user.getUserPw());
+		
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		HttpStatus status = HttpStatus.ACCEPTED;
 		
 		try {
+			
+			UserDto loginUser = service.login(user.getUserId(), user.getUserPw());
+			
+			Object token = service.getRefreshToken(user.getUserId());
+			// 토큰이 존재하는 경우
+			if(token != null) {
+				jwtUtil.checkToken()
+			}
+			
 			if(loginUser != null) {
 				String accessToken = jwtUtil.createAccessToken(loginUser.getUserId());
 				String refreshToken = jwtUtil.createRefreshToken(loginUser.getUserId());
@@ -101,10 +109,10 @@ public class UserController {
 		return new ResponseEntity<Map<String, Object>>(resultMap, status);
 	}
 	
-	@ApiOperation(value = "회원인증", notes = "회원 정보를 담은 Token을 반환한다.", response = Map.class)
+	@ApiOperation(value = "회원인증", notes = "회원 정보를 반환한다.", response = Map.class)
 	@GetMapping("/info/{userId}")
 	public ResponseEntity<?> info(
-			@PathVariable("userId") @ApiParam(value = "인증할 회원의 아이디.", required = true) String userId,
+			@PathVariable("userId") @ApiParam(required = true) String userId,
 			HttpServletRequest request) {
 
 		Map<String, Object> resultMap = new HashMap<>();
@@ -167,5 +175,5 @@ public class UserController {
 		}
 		return new ResponseEntity<Map<String, Object>>(resultMap, status);
 	}
-
+	
 }

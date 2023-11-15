@@ -32,11 +32,11 @@ public class WebConfiguration implements WebMvcConfigurer {
 		registry
 			.addMapping("/**")
 			.allowedOrigins("*")
-			.allowedOrigins("http://localhost:8080", "http://localhost:5173", "http://localhost:5174")
+//			.allowedOrigins("http://localhost:8080", "http://localhost:5173", "http://localhost:5174")
 			.allowedMethods(HttpMethod.GET.name(), HttpMethod.POST.name(), HttpMethod.PUT.name(),
 						HttpMethod.DELETE.name(), HttpMethod.HEAD.name(), HttpMethod.OPTIONS.name(),
 						HttpMethod.PATCH.name())
-//			.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH", "HEAD")
+			.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH", "HEAD")
 //			.allowCredentials(true)
 //			.exposedHeaders("*")
 			.maxAge(1800); // Pre-flight Caching

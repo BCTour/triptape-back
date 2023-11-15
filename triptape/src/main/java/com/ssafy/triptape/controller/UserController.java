@@ -85,7 +85,7 @@ public class UserController {
 			Object token = service.getRefreshToken(user.getUserId());
 			// 토큰이 존재하는 경우
 			if(token != null) {
-				jwtUtil.checkToken()
+				
 			}
 			
 			if(loginUser != null) {

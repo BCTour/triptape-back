@@ -32,7 +32,7 @@ public class WebConfiguration implements WebMvcConfigurer {
 		registry
 			.addMapping("/**")
 			.allowedOrigins("*")
-//			.allowedOrigins("http://localhost:5173", "http://localhost:5174")
+			.allowedOrigins("http://localhost:8080", "http://localhost:5173", "http://localhost:5174")
 			.allowedMethods(HttpMethod.GET.name(), HttpMethod.POST.name(), HttpMethod.PUT.name(),
 						HttpMethod.DELETE.name(), HttpMethod.HEAD.name(), HttpMethod.OPTIONS.name(),
 						HttpMethod.PATCH.name())
@@ -45,7 +45,9 @@ public class WebConfiguration implements WebMvcConfigurer {
 //	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(jwtInterceptor)
-		.excludePathPatterns("/user/login");
+		.excludePathPatterns("/swagger-ui/**", "/swagger-resources/**","/v2/api-docs")
+		.excludePathPatterns("/user/login")
+		.excludePathPatterns("/user/logout");
 	}
 
 //	Swagger UI 실행시 404처리

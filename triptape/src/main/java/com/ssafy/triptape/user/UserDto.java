@@ -13,27 +13,38 @@ import javax.validation.constraints.NotEmpty;
 
 import com.ssafy.triptape.file.FileInfoDto;
 
+import io.swagger.annotations.ApiModelProperty;
+
 @ToString
 @Setter
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Builder(builderMethodName = "userBuilder", toBuilder = true)
 public class UserDto {
 	
-	private int userKey;
 	@NotEmpty(message="id는 필수값입니다.")
-	private String id;
+	@ApiModelProperty(value = "아이디")
+	private String userId;
 	@NotEmpty(message="pw는 필수값입니다.")
-	private String pw;
-	private String name;
+	@ApiModelProperty(value = "비밀번호")
+	private String userPw;
+	@ApiModelProperty(value = "이름")
+	private String userName;
+	@ApiModelProperty(value = "닉네임")
 	private String nickname;
 	@Email(message="이메일 타입이어야 합니다.")
+	@ApiModelProperty(value = "이메일")
 	private String email;
+	@ApiModelProperty(value = "전화번호")
 	private String tel;
+	@ApiModelProperty(value = "프로필 이미지")
 	private FileInfoDto profileImg;
+	@ApiModelProperty(value = "생일")
 	private String birthday;
+	@ApiModelProperty(value = "성별")
 	private int gender;
+	@ApiModelProperty(value = "등록일자")
 	private String joindate;
-
+	@ApiModelProperty(value="관리자여부")
+	private int isAdmin;
 }

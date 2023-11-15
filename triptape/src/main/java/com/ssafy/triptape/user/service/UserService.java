@@ -1,6 +1,7 @@
 package com.ssafy.triptape.user.service;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.web.multipart.MultipartFile;
@@ -8,6 +9,10 @@ import org.springframework.web.multipart.MultipartFile;
 import com.ssafy.triptape.user.UserDto;
 
 public interface UserService {
-	public int regist(UserDto user, MultipartFile file) throws IOException;
-	Optional<UserDto> login(String id);
+	int regist(UserDto user, MultipartFile file) throws IOException;
+	UserDto login(String userId, String userPw); 
+	UserDto userInfo(String userId);
+	void saveRefreshToken(String userId, String refreshToken);
+	Object getRefreshToken(String userId);
+	void deleteRefreshToken(String userId);
 }

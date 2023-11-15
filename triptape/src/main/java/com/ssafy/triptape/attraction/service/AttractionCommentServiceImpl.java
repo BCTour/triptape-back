@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.triptape.attraction.AttractionComment;
 import com.ssafy.triptape.attraction.AttractionDto;
@@ -23,6 +24,7 @@ public class AttractionCommentServiceImpl implements AttractionCommentService {
 	}
 
 	@Override
+	@Transactional
 	public int regist(AttractionComment comment) {
 		return repo.regist(comment);
 	}
@@ -33,11 +35,13 @@ public class AttractionCommentServiceImpl implements AttractionCommentService {
 	}
 
 	@Override
+	@Transactional
 	public int modify(AttractionComment comment) {
 		return repo.modify(comment);
 	}
 
 	@Override
+	@Transactional
 	public int delete(int commmentKey) {
 		// TODO Auto-generated method stub
 		return repo.delete(commmentKey);

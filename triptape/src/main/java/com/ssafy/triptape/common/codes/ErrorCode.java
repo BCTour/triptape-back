@@ -41,6 +41,8 @@ public enum ErrorCode {
     // com.fasterxml.jackson.core Processing Error
     JACKSON_PROCESS_ERROR(400, "G007", "com.fasterxml.jackson.core Exception"),
 
+    UNAUTHORIZED(401, "G999", "UNAUTHORIZED"),
+    
     // 권한이 없음
     FORBIDDEN_ERROR(403, "G008", "Forbidden Exception"),
 
@@ -59,16 +61,8 @@ public enum ErrorCode {
     // 서버가 처리 할 방법을 모르는 경우 발생
     INTERNAL_SERVER_ERROR(500, "G999", "Internal Server Error Exception"),
 
+    DUPLICATE_KEY_ERROR(500, "G999", "중복된 값이 입력되었습니다.")
     
-    /* custom error */
-    BUSINESS_EXCEPTION_ERROR(200, "B999", "Business Exception Error"),
-    // Transaction Insert Error
-    INSERT_ERROR(200, "9999", "Insert Transaction Error Exception"),
-    // Transaction Update Error
-    UPDATE_ERROR(200, "9999", "Update Transaction Error Exception"),
-    // Transaction Delete Error
-    DELETE_ERROR(200, "9999", "Delete Transaction Error Exception"),
-
     ; // End
 
     

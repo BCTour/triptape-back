@@ -3,6 +3,8 @@ package com.ssafy.triptape.user.service;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,19 +50,39 @@ public class UserServiceImpl implements UserService {
 
 		fileHandling(user, file);
 		String salt = BCrypt.gensalt(12);
-		String hashpw = BCrypt.hashpw(user.getPw(), salt);
-		user.setPw(hashpw);
+		String hashpw = BCrypt.hashpw(user.getUserPw(), salt);
+		user.setUserPw(hashpw);
 		return repo.regist(user,salt);
 	}
 
-	/**
-     * 로그인 구현체
-     *
-     */
-    @Override
-    public Optional<UserDto> login(String id) {
-        return repo.login(id);
-    }
+	@Override
+	public UserDto login(String userId, String pw) {
+		String salt = repo.getSalt(userId);
+		if(salt == null) {
+			return null;
+		}
+		String hashPass = BCrypt.hashpw(pw, salt);
+		return repo.login(userId, hashPass);
+	}
 
-	
+	@Override
+	public UserDto userInfo(String userId) {
+		return repo.userInfo(userId);
+	}
+
+	@Override
+	public void saveRefreshToken(String userId, String refreshToken) {
+		
+		repo.saveRefreshToken(userId, refreshToken);
+	}
+
+	@Override
+	public Object getRefreshToken(String userId) {
+		return repo.getRefreshToken(userId);
+	}
+
+	@Override
+	public void deleteRefreshToken(String userId) {
+		repo.deleteRefreshToken(userId);	
+	}
 }

@@ -4,11 +4,16 @@
 	
 	
 	<resultMap type="com.ssafy.triptape.user.UserDto" id="user">
-		<id property="userKey" column="user_key" />
+		<result property="userId" column="user_id"/>
+		<result property="userName" column="user_name"/>
+		<result property="nickname" column="nickname"/>
+		<result property="tel" column="tel"/>
+		<result property="birthday" column="birthday"/>
+		<result property="gender" column="gender"/>
 		<result property="isAdmin" column="is_admin" />
-		<collection property="profileImg" javaType="com.ssafy.triptape.file.FileInfoDto">
-			<result column="saveFile" property="profileImg" />
-		</collection>
+		<association property="profileImg" javaType="com.ssafy.triptape.file.FileInfoDto">
+			<result column="profile_img" property="saveFile" />
+		</association>
 	</resultMap>
 
 	<resultMap type="com.ssafy.triptape.attraction.AttractionComment" id="comment">
@@ -21,14 +26,14 @@
 	
 
 	<insert id="regist">
-		insert into attraction_comment(user_key, attraction_key, content)
-		values(#{user.userKey}, #{attractionKey}, #{content})
+		insert into attraction_comment(user_id, attraction_key, content)
+		values(#{user.userId}, #{attractionKey}, #{content})
 	</insert>
 
 	<select id="search" resultMap="comment">
-		select  * from attraction_comment a 
+		select * from attraction_comment a 
 					join attraction_info b on a.attraction_key = b.attraction_key
-					join user c on a.user_key = c.user_key
+					join user c on a.user_id = c.user_id
 		where a.attraction_key=#{attractionKey}
 		order by a.createtime desc
 		limit ${start}, ${countPerPage}
@@ -38,7 +43,7 @@
 	<select id="getTotalListCount" resultType="int">
 		select count(*) from attraction_comment a 
 					join attraction_info b on a.attraction_key = b.attraction_key
-					join user c on a.user_key = c.user_key
+					join user c on a.user_id = c.user_id
 		where a.attraction_key=#{attractionKey}
 	</select>	
 	

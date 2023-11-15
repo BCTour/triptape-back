@@ -7,6 +7,7 @@ import com.ssafy.triptape.common.response.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.boot.json.JsonParseException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -20,6 +21,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import java.io.IOException;
+import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 
 /**
  * Controller 내에서 발생하는 Exception 대해서 Catch 하여 응답값(Response)을 보내주는 기능을 수행함.
@@ -176,6 +179,14 @@ public class GlobalExceptionHandler {
     
     // ==================================================================================================================
 
+    @ExceptionHandler(DuplicateKeyException.class)
+    protected ResponseEntity<ErrorResponse> handleSQLException(DuplicateKeyException ex) {
+        log.error("DuplicateKeyException", ex);
+        final ErrorResponse response = ErrorResponse.of(ErrorCode.DUPLICATE_KEY_ERROR, ex.getMessage());
+        return new ResponseEntity<>(response, HTTP_STATUS_OK);
+    }
+    
+    
     /**
      * [Exception] 모든 Exception 경우 발생
      *

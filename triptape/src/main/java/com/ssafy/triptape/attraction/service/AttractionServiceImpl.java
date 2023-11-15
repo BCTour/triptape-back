@@ -68,12 +68,14 @@ public class AttractionServiceImpl implements AttractionService {
 	}
 
 	@Override
+	@Transactional
 	public AttractionDto modify(AttractionDto attraction) {
 		repo.modify(attraction);
 		return repo.info(attraction.getAttractionKey());
 	}
 
 	@Override
+	@Transactional
 	public int delete(int attractionKey) {
 		return repo.delete(attractionKey);
 	}

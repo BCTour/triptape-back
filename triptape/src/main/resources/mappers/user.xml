@@ -2,26 +2,51 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ssafy.triptape.user.repo.UserRepo">
 	<resultMap type="com.ssafy.triptape.user.UserDto" id="user">
-		<id property="userKey" column="user_key" />
+		<result property="userId" column="user_id"/>
+		<result property="userPw" column="user_pw"/>
+		<result property="userName" column="user_name"/>
+		<result property="nickname" column="nickname"/>
+		<result property="email" column="email"/>
+		<result property="tel" column="tel"/>
+		<result property="birthday" column="birthday"/>
+		<result property="gender" column="gender"/>
+		<result property="joindate" column="joindate" />
 		<result property="isAdmin" column="is_admin" />
-		<collection property="profileImg" javaType="com.ssafy.triptape.file.FileInfoDto">
-			<result column="saveFile" property="profileImg" />
-		</collection>
+		<association property="profileImg" javaType="com.ssafy.triptape.file.FileInfoDto">
+			<result column="profile_img" property="saveFile" />
+		</association>
 	</resultMap>
 
 	<insert id="regist">
-		insert into user(id, pw, name, nickname, email, tel, profile_img, birthday, gender, is_admin, salt) 
-		values(#{user.id}, #{user.pw}, #{user.name}, #{user.nickname}, #{user.email}, 
+		insert into user(user_id, user_pw, user_name, nickname, email, tel, profile_img, birthday, gender, is_admin, salt) 
+		values(#{user.userId}, #{user.userPw}, #{user.userName}, #{user.nickname}, #{user.email}, 
 			#{user.tel}, #{user.profileImg.saveFile}, #{user.birthday}, #{user.gender}
 			, #{user.isAdmin}, #{salt})
 	</insert>
 	
 	<select id="login" resultMap="user">
-		select * from user where id = #{id}
+		select user_id, user_name from user where user_id = #{userId} and user_pw = #{userPw}
 	</select>
 	
-	<select id="getsalt">
-		select salt from user where id = #{id}
+	<select id="getSalt" resultType="String">
+		select salt from user where user_id=#{userId}
 	</select>
-
+	
+	<select id="userInfo" resultMap="user">
+		select * from user where user_id = #{userId}
+	</select>
+	
+	<update id="saveRefreshToken">
+		insert into token values( #{userId}, #{refreshToken})
+	</update>
+	
+	<select id="getRefreshToken" resultType="string">
+		select refresh_token
+		from token
+		where user_id = #{userId}
+	</select>
+	
+	<delete id="deleteRefreshToken">
+		delete from token where user_Id=#{userId}
+	</delete>
 </mapper>

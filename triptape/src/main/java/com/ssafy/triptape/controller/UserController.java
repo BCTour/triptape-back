@@ -3,7 +3,9 @@ package com.ssafy.triptape.controller;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
+import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +31,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.ssafy.triptape.common.util.JWTUtil;
 import com.ssafy.triptape.user.UserDto;
+import com.ssafy.triptape.user.service.EmailService;
 import com.ssafy.triptape.user.service.UserService;
 
 import io.swagger.annotations.Api;
@@ -46,6 +49,9 @@ public class UserController {
 	
 	@Autowired
 	private UserService service;
+	
+	@Autowired
+	private EmailService emailService;
 	
 	@Autowired
 	private JWTUtil jwtUtil;
@@ -232,4 +238,27 @@ public class UserController {
 		
 		return new ResponseEntity<Map<String, Object>>(resultMap, status);
 	}
+	
+	@GetMapping("/email")
+	public ResponseEntity<?> emailCheck(@RequestParam String email) {
+		
+		UserDto user = service.searchByEmail(email);
+		HttpStatus status = HttpStatus.ACCEPTED;
+		Map<String, Object> resultMap = new HashMap<>();
+		try {
+			if(user != null) {
+				String code = emailService.sendSimpleMessage(email);
+				resultMap.put("code", code);
+				status = HttpStatus.OK;
+			} else {
+				resultMap.put("message", "존재하지 않는 이메일입니다");
+				status = HttpStatus.UNAUTHORIZED;
+			}
+		} catch(Exception e) {
+			resultMap.put("message", e.getMessage());
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
+		}
+		return new ResponseEntity<Map<String, Object>>(resultMap, status);
+	}
+
 }

@@ -108,4 +108,9 @@ public class UserServiceImpl implements UserService {
 		fileHandling(user, file);
 		return repo.modifyUser(user);
 	}
+
+	@Override
+	public UserDto searchByEmail(String email) {
+		return repo.searchByEmail(email);
+	}
 }

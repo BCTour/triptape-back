@@ -63,4 +63,7 @@
 		   	   gender=#{gender}
 		 where user_id=#{userId}   
 	</update>
+	<select id="searchByEmail" resultMap="user">
+		select * from user where email = #{email}
+	</select>	
 </mapper>

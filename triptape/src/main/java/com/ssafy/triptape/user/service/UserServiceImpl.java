@@ -28,20 +28,21 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private UserRepo repo;
 	
-	private String path = "classpath:static/resources/upload/user";
 	private void fileHandling(UserDto user, MultipartFile file) throws IOException {
 		
-		Resource res = resLoader.getResource(path);
+		user.setProfileImg(new FileInfoDto());
+		Resource res = resLoader.getResource(user.getProfileImg().getSaveFolder());
 		if (file != null && file.getSize() > 0) {
+			
+			String name = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+			
 			FileInfoDto fileInfo = new FileInfoDto();
-			fileInfo.setSaveFolder(path);
-			fileInfo.setSaveFile(System.currentTimeMillis() + "_" + file.getOriginalFilename());
+
+			fileInfo.setSaveFile("http://localhost:8080/img/" + name);
 			fileInfo.setOriginalFile(file.getOriginalFilename());
 			
-			user.setProfileImg(fileInfo);
-
-//			System.out.println(res.getFile().getCanonicalPath() + "/" + user.getProfileImg().getSaveFile());
-			file.transferTo(new File(res.getFile().getCanonicalPath() + "/" + user.getProfileImg().getSaveFile()));
+			
+			file.transferTo(new File(res.getFile().getCanonicalPath() + "/" + name));
 		}
 	}
 	
@@ -69,11 +70,9 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserDto userInfo(String userId) throws IOException {
 		UserDto user = repo.userInfo(userId);
-		String img = resLoader.getResource(path).getFile().getCanonicalPath() + "/" + user.getProfileImg().getSaveFile();
-		
+
 		FileInfoDto fileInfo = new FileInfoDto();
-		fileInfo.setSaveFolder(path);
-		fileInfo.setSaveFile(img);
+		fileInfo.setSaveFile(user.getProfileImg().getSaveFile());
 		
 		user.setProfileImg(fileInfo);
 		return user;

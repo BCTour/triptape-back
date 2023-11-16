@@ -12,8 +12,8 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 public class FileInfoDto {
-	private String saveFolder;
+	private String saveFolder = "classpath:static/resources/upload";
 	private String originalFile; // 원본 파일 이름
 	private String saveFile; // 실제 저장 파일 이름
-
+	
 }

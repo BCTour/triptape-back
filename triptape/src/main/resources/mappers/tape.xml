@@ -2,10 +2,88 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ssafy.triptape.tape.repo.TapeRepo">
 
+	<resultMap type="com.ssafy.triptape.user.UserDto" id="user">
+		<result property="userId" column="user_id"/>
+		<result property="userName" column="user_name"/>
+		<result property="isAdmin" column="is_admin" />
+		<association property="profileImg" javaType="com.ssafy.triptape.file.FileInfoDto">
+			<result column="profile_img" property="saveFile" />
+		</association>
+	</resultMap>
+
+	<resultMap type="com.ssafy.triptape.tape.TapeDto" id="tape">
+		<id column="tape_key" property="tapeKey" />
+		<result column="title" property="title" />
+		<result column="description" property="description" />
+		<result column="createtime" property="createtime" />
+		<result column="join_num" property="joinNum" />
+		<result column="view_num" property="viewNum" />
+		<collection property="user" resultMap="user" />
+		<collection property="img" resultMap="img" />
+	</resultMap>
+
+	<resultMap type="com.ssafy.triptape.file.FileInfoDto" id="img">
+			<result column="img" property="saveFile" />
+	</resultMap>
+
 	<insert id="registTape">
-		insert into tape(user_id, title, description, img, view_num)
-		values (#{user.userId}, #{title}, #{description}, #{img.})
-		
+		insert into tape(user_id, title, description, img)
+		values (#{user.userId}, #{title}, #{description}, #{img.saveFile})
 	</insert>
+	
+	<select id="searchTopRecent" resultMap="tape">
+		select * from tape a 
+				 left outer join user b on a.user_id = b.user_id
+		order by createtime desc
+		limit 0, ${n}
+	</select>
+	
+	<sql id="condition">
+		<if test="keyword != null">
+			${keyword} like concat('%', #{word}, '%')
+		</if>
+	</sql>
+	
+	<select id="searchByCondition">
+		select * from tape a 
+				 left outer join user b on a.user_id = b.user_id
+		<where>
+			<include refid="condition" />
+		</where>
+		limit ${start}, ${countPerPage}
+	</select>
+	
+	<select id="tapeInfo" resultMap="tape">
+		select * from tape a left outer join user b on a.user_id = b.user_id
+		where a.tape_key = #{tapeKey}
+	</select>
+	
+	<select id="getTotalListCount" resultType="int">
+		select count(*) from tape a left outer join user b on a.user_id = b.user_id
+		<where>
+			<include refid="condition" />
+		</where>
+	</select>	
+	
+	
+	<update id="updateView">
+		update tape
+		   set view_num = view_num + 1
+		 where tape_key = #{tapeKey}
+	</update>
+	
+	<update id="updateJoin">
+		update tape
+		   set join_num = join_num + 1
+		 where tape_key = #{tapeKey}
+	</update>
+	
+	<insert id="likeTape">
+		insert into user_like_tape(user_id, tape_key) values(#{userId}, #{tapeKey})
+	</insert>
+	
+	<delete id="dislikeTape">
+		delete from user_like_tape where user_id=#{userId} and tape_key=#{tapeKey}
+	</delete>
 
 </mapper>

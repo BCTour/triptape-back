@@ -22,7 +22,7 @@ public class EmailConfig {
     private String host;
     @Value("${spring.mail.port}")
     private int port;
-
+    
     @Bean
     public JavaMailSender javaMailService() {
         JavaMailSenderImpl javaMailSender = new JavaMailSenderImpl();
@@ -40,7 +40,8 @@ public class EmailConfig {
         Properties properties = new Properties();
         properties.setProperty("mail.transport.protocol", "smtp"); // 프로토콜 설정
         properties.setProperty("mail.smtp.auth", "true"); // smtp 인증
-        properties.setProperty("mail.smtp.starttls.enable", "true"); // smtp starttls 사용
+        properties.setProperty("mail.smtp.starttls.enable", "true"); // smtp starttls 사용  
+        properties.setProperty("mail.debug", "true");  
         return properties;
     }
 }

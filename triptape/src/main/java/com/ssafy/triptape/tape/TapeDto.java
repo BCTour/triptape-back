@@ -24,7 +24,7 @@ import lombok.ToString;
 public class TapeDto {
 	
 	@ApiModelProperty("테이프키")
-	private int tape_key;
+	private int tapeKey;
 	@ApiModelProperty("제목")
 	private String title;
 	@ApiModelProperty("설명")
@@ -36,7 +36,7 @@ public class TapeDto {
 	@ApiModelProperty("등록일자")
 	private String createtime;
 	@ApiModelProperty("참여하는 사람 수")
-	private int join_num;
+	private int joinNum;
 	@ApiModelProperty("조회하는 사람 수")
-	private int view_num;
+	private int viewNum;
 }

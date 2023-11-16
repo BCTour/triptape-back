@@ -7,9 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.triptape.attraction.AttractionComment;
-import com.ssafy.triptape.attraction.AttractionDto;
-import com.ssafy.triptape.attraction.AttractionTypeDto;
-import com.ssafy.triptape.attraction.SearchCondition;
 import com.ssafy.triptape.attraction.repo.AttractionCommentRepo;
 
 @Service
@@ -25,7 +22,7 @@ public class AttractionCommentServiceImpl implements AttractionCommentService {
 	 * @return List<AttractionComment> - 관광지댓글 리스트
 	 * */
 	@Override
-	public List<AttractionComment> search(int attractionKey, int start, int countPerPage) {
+	public List<AttractionComment> search(int attractionKey, int start, int countPerPage) {	
 		return repo.search(attractionKey, start, countPerPage);
 	}
 

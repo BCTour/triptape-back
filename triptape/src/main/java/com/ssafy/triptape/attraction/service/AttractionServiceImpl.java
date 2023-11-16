@@ -26,17 +26,18 @@ public class AttractionServiceImpl implements AttractionService {
 	private AttractionRepo repo;
 	
 	private void fileHandling(AttractionDto attraction, MultipartFile file) throws IOException {
-		String path = "classpath:static/resources/upload/attraction";
-		Resource res = resLoader.getResource(path);
+		
+		attraction.setImg(new FileInfoDto());
+		Resource res = resLoader.getResource(attraction.getImg().getSaveFolder());
 		if (file != null && file.getSize() > 0) {
 			FileInfoDto fileInfo = new FileInfoDto();
-			fileInfo.setSaveFolder(path);
-			fileInfo.setSaveFile(System.currentTimeMillis() + "_" + file.getOriginalFilename());
+			String name = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+			fileInfo.setSaveFile("http://localhost:8080/img/" + name);
 			fileInfo.setOriginalFile(file.getOriginalFilename());
 			
 			attraction.setImg(fileInfo);
 
-			file.transferTo(new File(res.getFile().getCanonicalPath() + "/" + attraction.getImg().getSaveFile()));
+			file.transferTo(new File(res.getFile().getCanonicalPath() + "/" + name));
 		}
 	}
 	

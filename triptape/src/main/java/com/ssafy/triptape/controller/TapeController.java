@@ -163,16 +163,26 @@ public class TapeController {
 	@ApiOperation(value="특정 테이프를 수정합니다.", consumes="multipart/form-data")
 	public ResponseEntity<?> dislikeTape(@RequestPart(value="tape") TapeDto tape, @RequestPart(value="file", required = false) MultipartFile file){
 		
+		Map<String, Object> resultMap = new HashMap<>();
 		HttpStatus status = HttpStatus.ACCEPTED;
+		String message;
 
 		try {
-			service.updateTape(tape, file);
-			status = HttpStatus.OK;
-			return new ResponseEntity<>(status);
+			int result = service.updateTape(tape, file);
+			if(result == 1) {
+				status = HttpStatus.OK;
+				TapeDto tapeResult = service.tapeInfo(tape.getTapeKey());
+				resultMap.put("tape", tapeResult);
+			}else {
+				status = HttpStatus.NO_CONTENT;
+				message = "수정할 내용이 없습니다.";
+				resultMap.put("message", message);
+			}
 		} catch(Exception e) {
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
-			return new ResponseEntity<String>(e.getMessage(), status);
+			message = e.getMessage();
 		}
+		return new ResponseEntity<Map<String, Object>>(resultMap, status);
 	}
 	
 	@DeleteMapping("/delete/{tapeKey}")

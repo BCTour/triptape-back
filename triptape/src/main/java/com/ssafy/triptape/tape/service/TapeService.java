@@ -16,8 +16,8 @@ public interface TapeService {
 	List<TapeDto> searchByCondition(String keyword, String word, int start, int countPerPage);
 	int getTotalListCount(String keyword, String word);
 	TapeDto tapeInfo(int tapeKey);
-	void deleteTape(int tapeKey);
-	void updateTape(TapeDto tape, MultipartFile file) throws IOException ;
+	int deleteTape(int tapeKey);
+	int updateTape(TapeDto tape, MultipartFile file) throws IOException ;
 	
 	void updateView(int tapeKey);
 	void updateJoin(int tapeKey);

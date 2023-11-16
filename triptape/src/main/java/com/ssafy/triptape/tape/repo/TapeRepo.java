@@ -15,8 +15,8 @@ public interface TapeRepo {
 	List<TapeDto> searchByCondition(String keyword, String word, int start, int countPerPage);
 	int getTotalListCount(String keyword, String word);
 	TapeDto tapeInfo(int tapeKey);
-	void deleteTape(int tapeKey);
-	void updateTape(TapeDto tape);
+	int deleteTape(int tapeKey);
+	int updateTape(TapeDto tape);
 	
 	void likeTape(int tapeKey, String userId);
 	void dislikeTape(int tapeKey, String userId);

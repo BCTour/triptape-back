@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssafy.triptape.record.repo.RecordRepo">
+	<resultMap type="com.ssafy.triptape.attraction.AttractionDto" id="attraction">
+		<id column="attraction_key" property="attractionKey" />
+		<result column="name" property="name" />
+		<result column="address" property="address"/>
+		<result column="latitude" property="latitude"/>
+		<result column="longitude" property="longitude"/>
+		<result column="description" property="description"/>
+		<association property="attractionType" javaType="com.ssafy.triptape.attraction.AttractionTypeDto">
+			<result column="type_code" property="typeCode" />
+			<result column="type_name" property="typeName" />
+		</association>
+		<association property="img" javaType="com.ssafy.triptape.file.FileInfoDto">
+			<result column="img" property="saveFile"  />
+		</association>
+	</resultMap>
+
+	<resultMap type="com.ssafy.triptape.user.UserDto" id="user">
+		<result property="userId" column="user_id"/>
+		<result property="userName" column="user_name"/>
+		<result property="isAdmin" column="is_admin" />
+		<association property="profileImg" javaType="com.ssafy.triptape.file.FileInfoDto">
+			<result column="profile_img" property="saveFile" />
+		</association>
+	</resultMap>
+
+	<resultMap type="com.ssafy.triptape.file.FileInfoDto" id="img">
+			<result column="img" property="saveFile" />
+	</resultMap>
+
+	<resultMap type="com.ssafy.triptape.record.RecordDto" id="tape">
+		<id column="record_key" property="recordKey" />
+		<result column="tape_key" property="tapeKey" />
+		<result column="content" property="content" />
+		<result column="createtime" property="createtime" />
+		<collection property="attraction" resultMap="attraction" />
+		<collection property="img" resultMap="img" />
+		<collection property="user" resultMap="user" />
+	</resultMap>
+
+
+	<insert id="registTape">
+		insert into registRecord(tape_key, content, img, user_id, attraction_key, parent_record_key)
+		values (#{tapeKey}, #{content}, #{img.saveFile}, #{user.userId}, #{attraction.attractionKey},#{parentRecordKey})
+	</insert>
+	
+
+
+</mapper>

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.triptape.file.FileInfoDto;
@@ -42,6 +43,7 @@ public class TapeServiceImpl implements TapeService {
 	
 	
 	@Override
+	@Transactional
 	public void registTape(TapeDto tape, MultipartFile file) throws IOException{
 		fileHandling(tape, file);
 		repo.registTape(tape);
@@ -59,12 +61,14 @@ public class TapeServiceImpl implements TapeService {
 
 
 	@Override
+	@Transactional
 	public void updateView(int tapeKey) {
 		repo.updateView(tapeKey);
 	}
 
 
 	@Override
+	@Transactional
 	public void updateJoin(int tapeKey) {
 		repo.updateJoin(tapeKey);
 	}
@@ -101,15 +105,17 @@ public class TapeServiceImpl implements TapeService {
 
 
 	@Override
-	public void deleteTape(int tapeKey) {
-		repo.deleteTape(tapeKey);
+	@Transactional
+	public int deleteTape(int tapeKey) {
+		return repo.deleteTape(tapeKey);
 	}
 
 
 	@Override
-	public void updateTape(TapeDto tape, MultipartFile file) throws IOException {
+	@Transactional
+	public int updateTape(TapeDto tape, MultipartFile file) throws IOException {
 		fileHandling(tape, file);
-		repo.updateTape(tape);
+		return repo.updateTape(tape);
 	}
 
 }

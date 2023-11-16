@@ -8,7 +8,6 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,7 +40,7 @@ public class AttractionController {
 	
 	@PostMapping(value ="/regist", consumes = "multipart/form-data") 
 	@ApiOperation("관광지를 등록합니다.")
-	public ResponseEntity<?> regist(@Validated @ApiParam(value = "관광지 정보", required = true) @RequestPart(value="attraction") AttractionDto attraction, @RequestPart(name="file", required = false) MultipartFile file) throws IllegalStateException, IOException {
+	public ResponseEntity<?> regist(@ApiParam(value = "관광지 정보", required = true) @RequestPart(value="attraction") AttractionDto attraction, @RequestPart(name="file", required = false) MultipartFile file) throws IllegalStateException, IOException {
 		
 		try {
 			int result = service.regist(attraction, file);

@@ -50,7 +50,7 @@ public class WebConfiguration implements WebMvcConfigurer {
 		.excludePathPatterns("/user/regist")
 //		.excludePathPatterns("/attraction/search")
 		.excludePathPatterns("/user/refresh")
-		.excludePathPatterns("/user/email")
+		.excludePathPatterns("/user/registpw")
 		.excludePathPatterns("/user/regist/pw")
 		.excludePathPatterns("/attraction/**")
 		.excludePathPatterns("/tape/**");

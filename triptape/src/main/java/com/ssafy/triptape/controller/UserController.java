@@ -239,7 +239,7 @@ public class UserController {
 		return new ResponseEntity<Map<String, Object>>(resultMap, status);
 	}
 	
-	@GetMapping("/email")
+	@GetMapping("/findpw")
 	public ResponseEntity<?> emailCheck(@RequestParam String email) {
 			
 		HttpStatus status = HttpStatus.ACCEPTED;

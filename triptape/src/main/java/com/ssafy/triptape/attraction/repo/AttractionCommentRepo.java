@@ -6,6 +6,9 @@ import org.apache.ibatis.annotations.Mapper;
 
 import com.ssafy.triptape.attraction.AttractionComment;
 
+/**
+ * 관광지 댓글에 대한 mapper interface 입니다.
+ */
 @Mapper
 public interface AttractionCommentRepo {
 	List<AttractionComment> search(int attractionKey,int start, int countPerPage);

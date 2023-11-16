@@ -8,12 +8,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
-
 import com.ssafy.triptape.file.FileInfoDto;
 
 import io.swagger.annotations.ApiModelProperty;
+
+/**
+ * JWT 토큰에 대한 DTO입니다.
+ */
 
 @ToString
 @Setter
@@ -21,7 +22,6 @@ import io.swagger.annotations.ApiModelProperty;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TokenDto {
-	
 	private int userKey;
 	private int refreshToken;
 }

@@ -10,12 +10,16 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+/**
+ * 관광지 정보 검색 조건입니다.
+ */
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-@ApiModel(value = "SearchCondition (관광지 정보 조건)")
+@ApiModel(value = "관광지 정보 검색 조건")
 public class SearchCondition {
 
 	public final int countPerPage = 10;
@@ -24,7 +28,7 @@ public class SearchCondition {
 	private int typeCode;
 	@ApiModelProperty("관광지명")
 	private String name;
-	@ApiModelProperty("주소")
+	@ApiModelProperty("관광지 주소")
 	private String address;
 	@ApiModelProperty("현재 위치(위도)")
 	private double latitude;

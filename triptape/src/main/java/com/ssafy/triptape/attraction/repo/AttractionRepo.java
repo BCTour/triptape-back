@@ -8,6 +8,10 @@ import com.ssafy.triptape.attraction.AttractionDto;
 import com.ssafy.triptape.attraction.AttractionTypeDto;
 import com.ssafy.triptape.attraction.SearchCondition;
 
+/**
+ * 관광지에 대한 mapper interface 입니다.
+ */
+
 @Mapper
 public interface AttractionRepo {
 	int regist(AttractionDto attraction);

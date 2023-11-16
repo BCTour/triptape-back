@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -53,9 +55,32 @@ public class TapeController {
 		HttpStatus status = HttpStatus.ACCEPTED;
 		String message = "";
 		try {
-			String word = "";
-			
 			List<TapeDto> tapeList = service.searchTopRecent(n);
+			if(tapeList == null || tapeList.size() == 0) {
+				message = "조회할 데이터가 없습니다.";
+				status = HttpStatus.NO_CONTENT;
+				resultMap.put("message", message);
+			} else {
+				resultMap.put("tape", tapeList);
+				status = HttpStatus.OK;
+			}
+		} catch(Exception e) {
+			message = e.getMessage();
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
+			resultMap.put("message", message);
+		}
+		return new ResponseEntity<Map<String, Object>>(resultMap, status);
+	}
+	
+	@GetMapping("/search/popular/{n}")
+	@ApiOperation(value="인기 테이프 목록을 상위 {n}개를 조회합니다.")
+	public ResponseEntity<?> searchTopPopular(@PathVariable int n) {
+		
+		Map<String, Object> resultMap = new HashMap<>();
+		HttpStatus status = HttpStatus.ACCEPTED;
+		String message = "";
+		try {
+			List<TapeDto> tapeList = service.searchTopPopular(n);
 			if(tapeList == null || tapeList.size() == 0) {
 				message = "조회할 데이터가 없습니다.";
 				status = HttpStatus.NO_CONTENT;
@@ -134,6 +159,38 @@ public class TapeController {
 		return new ResponseEntity<Map<String, Object>>(resultMap, status);
 	}
 	
+	@PutMapping("/modify")
+	@ApiOperation(value="특정 테이프를 수정합니다.", consumes="multipart/form-data")
+	public ResponseEntity<?> dislikeTape(@RequestPart(value="tape") TapeDto tape, @RequestPart(value="file", required = false) MultipartFile file){
+		
+		HttpStatus status = HttpStatus.ACCEPTED;
+
+		try {
+			service.updateTape(tape, file);
+			status = HttpStatus.OK;
+			return new ResponseEntity<>(status);
+		} catch(Exception e) {
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
+			return new ResponseEntity<String>(e.getMessage(), status);
+		}
+	}
+	
+	@DeleteMapping("/delete/{tapeKey}")
+	@ApiOperation("특정 테이프를 삭제합니다.")
+	public ResponseEntity<?> dislikeTape(@PathVariable int tapeKey){
+		
+		HttpStatus status = HttpStatus.ACCEPTED;
+
+		try {
+			service.deleteTape(tapeKey);
+			status = HttpStatus.OK;
+			return new ResponseEntity<>(status);
+		} catch(Exception e) {
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
+			return new ResponseEntity<String>(e.getMessage(), status);
+		}
+	}
+	
 	@PostMapping("/like")
 	@ApiOperation("특정 테이프를 관심 리스트에 추가합니다.")
 	public ResponseEntity<?> likeTape(@RequestParam int tapeKey, @RequestParam String userId){
@@ -150,7 +207,7 @@ public class TapeController {
 		}
 	}
 	@DeleteMapping("/dislike")
-	@ApiOperation("특정 테이프를 관심 리스트에 추가합니다.")
+	@ApiOperation("특정 테이프를 관심 리스트에 삭제합니다.")
 	public ResponseEntity<?> dislikeTape(@RequestParam int tapeKey, @RequestParam String userId){
 		
 		HttpStatus status = HttpStatus.ACCEPTED;

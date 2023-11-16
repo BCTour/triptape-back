@@ -11,11 +11,14 @@ import com.ssafy.triptape.tape.TapeDto;
 public interface TapeService {
 	
 	void registTape(TapeDto tape, MultipartFile file) throws IOException;
-	List<TapeDto> searchTopRecent(int n);
+	List<TapeDto> searchTopRecent(int N);
+	List<TapeDto> searchTopPopular(int N);
 	List<TapeDto> searchByCondition(String keyword, String word, int start, int countPerPage);
 	int getTotalListCount(String keyword, String word);
 	TapeDto tapeInfo(int tapeKey);
-
+	void deleteTape(int tapeKey);
+	void updateTape(TapeDto tape, MultipartFile file) throws IOException ;
+	
 	void updateView(int tapeKey);
 	void updateJoin(int tapeKey);
 	

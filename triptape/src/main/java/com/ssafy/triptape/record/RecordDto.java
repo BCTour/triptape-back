@@ -1,5 +1,6 @@
-package com.ssafy.triptape.tape;
+package com.ssafy.triptape.record;
 
+import com.ssafy.triptape.attraction.AttractionDto;
 import com.ssafy.triptape.file.FileInfoDto;
 import com.ssafy.triptape.user.UserDto;
 
@@ -12,7 +13,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
- * Tape에 대한 DTO 입니다.
+ * record에 대한 DTO 입니다.
  * */
 
 @Getter
@@ -20,24 +21,23 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-@ApiModel(value="Tape에 대한 정보입니다.")
-public class TapeDto {
+@ApiModel(value="Record에 대한 정보입니다.")
+public class RecordDto {
 	
+	@ApiModelProperty("레코드키")
+	private int recordKey;
 	@ApiModelProperty("테이프키")
 	private int tapeKey;
-	@ApiModelProperty("제목")
-	private String title;
-	@ApiModelProperty("설명")
-	private String description;
+	@ApiModelProperty("내용")
+	private String content;
 	@ApiModelProperty("이미지")
 	private FileInfoDto img;
 	@ApiModelProperty("사용자")
 	private UserDto user;
+	@ApiModelProperty("관광지정보")
+	private AttractionDto attraction;
 	@ApiModelProperty("등록일자")
 	private String createtime;
-	@ApiModelProperty("참여하는 사람 수")
-	private int joinNum;
-	@ApiModelProperty("조회하는 사람 수")
-	private int viewNum;
-	private int popular;
+	@ApiModelProperty("참조레코드키")
+	private int parentRecordKey;
 }

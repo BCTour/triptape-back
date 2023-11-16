@@ -18,8 +18,9 @@
 		<result column="createtime" property="createtime" />
 		<result column="join_num" property="joinNum" />
 		<result column="view_num" property="viewNum" />
-		<collection property="user" resultMap="user" />
+		<result column="popular" property="popular" />
 		<collection property="img" resultMap="img" />
+		<collection property="user" resultMap="user" />
 	</resultMap>
 
 	<resultMap type="com.ssafy.triptape.file.FileInfoDto" id="img">
@@ -31,11 +32,21 @@
 		values (#{user.userId}, #{title}, #{description}, #{img.saveFile})
 	</insert>
 	
+	
+	<select id="searchTopPopular" resultMap="tape">
+		select *, popular from tape a 
+				 left outer join user b on a.user_id = b.user_id
+				 left outer join (select tape_key, count(*) popular from user_like_tape
+				 							group by tape_key) c on a.tape_key = c.tape_key 
+		order by c.popular desc, createtime desc
+		limit ${n}
+	</select>
+	
 	<select id="searchTopRecent" resultMap="tape">
 		select * from tape a 
 				 left outer join user b on a.user_id = b.user_id
 		order by createtime desc
-		limit 0, ${n}
+		limit ${n}
 	</select>
 	
 	<sql id="condition">
@@ -65,6 +76,18 @@
 		</where>
 	</select>	
 	
+	<update id="updateTape">
+		update tape
+		   set title=#{title},
+		   	   description = #{description},
+		   	   img=#{img.saveFile}
+		 where tape_key = #{tapeKey}
+	</update>
+	
+	<delete id="deleteTape">
+		delete from tape
+		 where tape_key = #{tapeKey}
+	</delete>
 	
 	<update id="updateView">
 		update tape

@@ -35,13 +35,10 @@ public class UserServiceImpl implements UserService {
 		if (file != null && file.getSize() > 0) {
 			
 			String name = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-			
-			FileInfoDto fileInfo = new FileInfoDto();
 
-			fileInfo.setSaveFile("http://localhost:8080/img/" + name);
-			fileInfo.setOriginalFile(file.getOriginalFilename());
-			
-			
+			user.getProfileImg().setSaveFile("http://localhost:8080/img/" + name);
+			user.getProfileImg().setOriginalFile(file.getOriginalFilename());
+		
 			file.transferTo(new File(res.getFile().getCanonicalPath() + "/" + name));
 		}
 	}
@@ -69,13 +66,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserDto userInfo(String userId) throws IOException {
-		UserDto user = repo.userInfo(userId);
-
-		FileInfoDto fileInfo = new FileInfoDto();
-		fileInfo.setSaveFile(user.getProfileImg().getSaveFile());
-		
-		user.setProfileImg(fileInfo);
-		return user;
+		return repo.userInfo(userId);
 	}
 
 	@Override

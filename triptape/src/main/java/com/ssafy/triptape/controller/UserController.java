@@ -97,6 +97,7 @@ public class UserController {
 			}
 			
 			if(loginUser != null) {
+
 				String accessToken = jwtUtil.createAccessToken(loginUser.getUserId());
 				String refreshToken = jwtUtil.createRefreshToken(loginUser.getUserId());
 				

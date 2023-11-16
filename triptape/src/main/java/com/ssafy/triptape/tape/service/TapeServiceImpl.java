@@ -32,12 +32,10 @@ public class TapeServiceImpl implements TapeService {
 		if(file != null && file.getSize() > 0) {
 			
 			String name = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-			FileInfoDto fileInfo = new FileInfoDto();
 			
-			fileInfo.setSaveFile("http://localhost:8080/img/" + name);
-			fileInfo.setOriginalFile(file.getOriginalFilename());
+			tape.getImg().setSaveFile("http://localhost:8080/img/" + name);
+			tape.getImg().setOriginalFile(file.getOriginalFilename());
 			
-			tape.setImg(fileInfo);
 			file.transferTo(new File(res.getFile().getCanonicalPath() + "/" + name));
 		}
 	}
@@ -93,6 +91,25 @@ public class TapeServiceImpl implements TapeService {
 	@Override
 	public void dislikeTape(int tapeKey, String userId) {
 		repo.dislikeTape(tapeKey, userId);
+	}
+
+
+	@Override
+	public List<TapeDto> searchTopPopular(int N) {
+		return repo.searchTopPopular(N);
+	}
+
+
+	@Override
+	public void deleteTape(int tapeKey) {
+		repo.deleteTape(tapeKey);
+	}
+
+
+	@Override
+	public void updateTape(TapeDto tape, MultipartFile file) throws IOException {
+		fileHandling(tape, file);
+		repo.updateTape(tape);
 	}
 
 }

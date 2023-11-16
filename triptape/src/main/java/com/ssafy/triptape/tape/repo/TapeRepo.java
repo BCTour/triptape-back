@@ -11,13 +11,17 @@ public interface TapeRepo {
 	
 	void registTape(TapeDto tape);
 	List<TapeDto> searchTopRecent(int N);
+	List<TapeDto> searchTopPopular(int N);
 	List<TapeDto> searchByCondition(String keyword, String word, int start, int countPerPage);
 	int getTotalListCount(String keyword, String word);
 	TapeDto tapeInfo(int tapeKey);
+	void deleteTape(int tapeKey);
+	void updateTape(TapeDto tape);
 	
 	void likeTape(int tapeKey, String userId);
 	void dislikeTape(int tapeKey, String userId);
 	
 	void updateView(int tapeKey);
 	void updateJoin(int tapeKey);
+	
 }

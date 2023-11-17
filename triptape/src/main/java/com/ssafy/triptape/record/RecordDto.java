@@ -40,4 +40,6 @@ public class RecordDto {
 	private String createtime;
 	@ApiModelProperty("참조레코드키")
 	private int parentRecordKey;
+	@ApiModelProperty("좋아요수")
+	private int likeNum;
 }

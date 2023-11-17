@@ -13,7 +13,7 @@
 			<result column="type_name" property="typeName" />
 		</association>
 		<association property="img" javaType="com.ssafy.triptape.file.FileInfoDto">
-			<result column="img" property="saveFile"  />
+			<result column="attractionImg" property="saveFile"  />
 		</association>
 	</resultMap>
 
@@ -30,22 +30,86 @@
 			<result column="img" property="saveFile" />
 	</resultMap>
 
-	<resultMap type="com.ssafy.triptape.record.RecordDto" id="tape">
+	<resultMap type="com.ssafy.triptape.record.RecordDto" id="record">
 		<id column="record_key" property="recordKey" />
 		<result column="tape_key" property="tapeKey" />
 		<result column="content" property="content" />
 		<result column="createtime" property="createtime" />
+		<result column="likeNum" property="likeNum"/>
 		<collection property="attraction" resultMap="attraction" />
 		<collection property="img" resultMap="img" />
 		<collection property="user" resultMap="user" />
 	</resultMap>
 
 
-	<insert id="registTape">
-		insert into registRecord(tape_key, content, img, user_id, attraction_key, parent_record_key)
-		values (#{tapeKey}, #{content}, #{img.saveFile}, #{user.userId}, #{attraction.attractionKey},#{parentRecordKey})
+	<insert id="registRecord">
+		insert into record(tape_key, content, img, user_id, attraction_key, parent_record_key)
+		values (#{tapeKey}, #{content}, #{img.saveFile}, #{user.userId}, #{attraction.attractionKey}, IF(${parentRecordKey} = 0, NULL, #{parentRecordKey}))
 	</insert>
 	
+	<sql id="likeNum">
+		select record_key, count(*) likeNum 
+		  from user_like_record
+		  group by record_key
+	</sql>
+	
+	<select id="recordAttraction" resultMap="attraction">
+		select distinct c.*, d.*, c.img 'attractionImg'
+		  from record a 
+		  join attraction_info c on a.attraction_key = c.attraction_key
+		  join attraction_type d on c.type_code = d.type_code
+		where a.tape_key = #{tapeKey} 
+		<if test="keyword != null and !keyword.equals('') ">
+			and c.${keyword} like concat('%', #{word},'%')
+		</if>
+		limit ${start}, ${countPerPage}
+	</select>
+	
+	<select id="searchRecord" resultMap="record">
+		select *, c.img 'attractionImg'
+		  from record a
+		  left outer join user b 		   on a.user_id = b.user_id
+		  left outer join attraction_info c on a.attraction_key = c.attraction_key
+		  left outer join attraction_type d on c.type_code = d.type_code
+		  left outer join (<include refid="likeNum" />) e on a.record_key = e.record_key 
+		 where a.tape_key = #{tapeKey} 
+		<if test="keyword != null and !keyword.equals('') ">
+			and a.${keyword} like concat('%', #{word},'%')	
+		</if>
+		order by a.createtime desc
+		limit ${start}, ${countPerPage}
+	</select>
+	
+	<select id="recordInfo" resultMap="record">
+		select *, c.img 'attractionImg'
+		  from record a
+		  left outer join user b 		   on a.user_id = b.user_id
+		  left outer join attraction_info c on a.attraction_key = c.attraction_key
+		  left outer join attraction_type d on c.type_code = d.type_code
+		  left outer join (<include refid="likeNum" />) e on a.record_key = e.record_key 
+		 where a.record_key = #{recordKey} 
+	</select>
+	
+	<delete id="deleteRecord">
+		delete from record where record_key = #{record_key}
+	</delete>
+	
+	<update id="modifyRecord">
+		update record
+		   set content = #{content},
+		   	   img = #{img.saveFile},
+		   	   attraction_key = #{attraction.attractionKey},
+		   	   parent_record_key=IF(${parentRecordKey} = 0, NULL, #{parentRecordKey})
+		 where record_key=#{recordKey}
+	</update>
+	
+	<insert id="likeRecord">
+		insert into user_like_record(user_id, record_key) values(#{userId}, #{recordKey})
+	</insert>
+	
+	<delete id="dislikeRecord">
+		delete from user_like_record where user_id=#{userId} and record_key=#{recordKey}
+	</delete>
 	
 
 

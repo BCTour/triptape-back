@@ -161,7 +161,7 @@ public class TapeController {
 	
 	@PutMapping("/modify")
 	@ApiOperation(value="특정 테이프를 수정합니다.", consumes="multipart/form-data")
-	public ResponseEntity<?> dislikeTape(@RequestPart(value="tape") TapeDto tape, @RequestPart(value="file", required = false) MultipartFile file){
+	public ResponseEntity<?> modifyTape(@RequestPart(value="tape") TapeDto tape, @RequestPart(value="file", required = false) MultipartFile file){
 		
 		Map<String, Object> resultMap = new HashMap<>();
 		HttpStatus status = HttpStatus.ACCEPTED;
@@ -187,7 +187,7 @@ public class TapeController {
 	
 	@DeleteMapping("/delete/{tapeKey}")
 	@ApiOperation("특정 테이프를 삭제합니다.")
-	public ResponseEntity<?> dislikeTape(@PathVariable int tapeKey){
+	public ResponseEntity<?> deleteTape(@PathVariable int tapeKey){
 		
 		HttpStatus status = HttpStatus.ACCEPTED;
 

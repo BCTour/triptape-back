@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ssafy.triptape.attraction.AttractionDto;
 import com.ssafy.triptape.record.RecordDto;
 import com.ssafy.triptape.record.service.RecordService;
 import io.swagger.annotations.ApiModel;
@@ -47,188 +48,167 @@ public class RecordController {
 		}
 	}
 	
-//	@GetMapping("/search/recent/{n}")
-//	@ApiOperation(value="최신 테이프 목록을 상위 {n}개를 조회합니다.")
-//	public ResponseEntity<?> searchKeyword(@PathVariable int n) {
-//		
-//		Map<String, Object> resultMap = new HashMap<>();
-//		HttpStatus status = HttpStatus.ACCEPTED;
-//		String message = "";
-//		try {
-//			List<TapeDto> tapeList = service.searchTopRecent(n);
-//			if(tapeList == null || tapeList.size() == 0) {
-//				message = "조회할 데이터가 없습니다.";
-//				status = HttpStatus.NO_CONTENT;
-//				resultMap.put("message", message);
-//			} else {
-//				resultMap.put("tape", tapeList);
-//				status = HttpStatus.OK;
-//			}
-//		} catch(Exception e) {
-//			message = e.getMessage();
-//			status = HttpStatus.INTERNAL_SERVER_ERROR;
-//			resultMap.put("message", message);
-//		}
-//		return new ResponseEntity<Map<String, Object>>(resultMap, status);
-//	}
-//	
-//	@GetMapping("/search/popular/{n}")
-//	@ApiOperation(value="인기 테이프 목록을 상위 {n}개를 조회합니다.")
-//	public ResponseEntity<?> searchTopPopular(@PathVariable int n) {
-//		
-//		Map<String, Object> resultMap = new HashMap<>();
-//		HttpStatus status = HttpStatus.ACCEPTED;
-//		String message = "";
-//		try {
-//			List<TapeDto> tapeList = service.searchTopPopular(n);
-//			if(tapeList == null || tapeList.size() == 0) {
-//				message = "조회할 데이터가 없습니다.";
-//				status = HttpStatus.NO_CONTENT;
-//				resultMap.put("message", message);
-//			} else {
-//				resultMap.put("tape", tapeList);
-//				status = HttpStatus.OK;
-//			}
-//		} catch(Exception e) {
-//			message = e.getMessage();
-//			status = HttpStatus.INTERNAL_SERVER_ERROR;
-//			resultMap.put("message", message);
-//		}
-//		return new ResponseEntity<Map<String, Object>>(resultMap, status);
-//	}
-//	
-//	@GetMapping("/search")
-//	@ApiOperation("조건에 따른 테이프 목록을 조회합니다.")
-//	public ResponseEntity<?> searchByCondition(@RequestParam(required=false)String keyword,@RequestParam(required=false)String word, @RequestParam int currentPage){
-//		
-//		Map<String, Object> resultMap = new HashMap<>();
-//		HttpStatus status = HttpStatus.ACCEPTED;
-//		String message;
-//		
-//		if(currentPage == 0) currentPage = 1;
-//		
-//		int countPerPage = 20;
-//		int start = (currentPage - 1) * countPerPage;
-//		
-//		try {
-//			List<TapeDto> tapeList = service.searchByCondition(keyword, word, start, countPerPage);
-//			int totalCount = service.getTotalListCount(keyword, word);
-//			
-//			if(tapeList == null || tapeList.size() == 0) {
-//				message = "조회할 데이터가 없습니다.";
-//				status = HttpStatus.NO_CONTENT;
-//				resultMap.put("message", message);
-//			} else {
-//				resultMap.put("tape", tapeList);
-//				resultMap.put("totalCount", totalCount);
-//				status = HttpStatus.OK;
-//			}
-//		} catch(Exception e) {
-//			message = e.getMessage();
-//			status = HttpStatus.INTERNAL_SERVER_ERROR;
-//			resultMap.put("message", message);
-//		}
-//		return new ResponseEntity<Map<String, Object>>(resultMap, status);
-//	}
-//	
-//	@GetMapping("/search/info/{tapeKey}")
-//	@ApiOperation("특정 테이프 정보를 조회합니다.")
-//	public ResponseEntity<?> searchInfo(@PathVariable int tapeKey){
-//		
-//		Map<String, Object> resultMap = new HashMap<>();
-//		HttpStatus status = HttpStatus.ACCEPTED;
-//		String message;
-//
-//		try {
-//			TapeDto tape = service.tapeInfo(tapeKey);
-//
-//			if(tape == null) { 
-//				message = "조회할 데이터가 없습니다.";
-//				status = HttpStatus.NO_CONTENT;
-//				resultMap.put("message", message);
-//			} else {
-//				resultMap.put("tape", tape);
-//				service.updateView(tapeKey);	
-//				status = HttpStatus.OK;
-//			}
-//		} catch(Exception e) {
-//			message = e.getMessage();
-//			status = HttpStatus.INTERNAL_SERVER_ERROR;
-//			resultMap.put("message", message);
-//		}
-//		return new ResponseEntity<Map<String, Object>>(resultMap, status);
-//	}
-//	
-//	@PutMapping("/modify")
-//	@ApiOperation(value="특정 테이프를 수정합니다.", consumes="multipart/form-data")
-//	public ResponseEntity<?> dislikeTape(@RequestPart(value="tape") TapeDto tape, @RequestPart(value="file", required = false) MultipartFile file){
-//		
-//		Map<String, Object> resultMap = new HashMap<>();
-//		HttpStatus status = HttpStatus.ACCEPTED;
-//		String message;
-//
-//		try {
-//			int result = service.updateTape(tape, file);
-//			if(result == 1) {
-//				status = HttpStatus.OK;
-//				TapeDto tapeResult = service.tapeInfo(tape.getTapeKey());
-//				resultMap.put("tape", tapeResult);
-//			}else {
-//				status = HttpStatus.NO_CONTENT;
-//				message = "수정할 내용이 없습니다.";
-//				resultMap.put("message", message);
-//			}
-//		} catch(Exception e) {
-//			status = HttpStatus.INTERNAL_SERVER_ERROR;
-//			message = e.getMessage();
-//		}
-//		return new ResponseEntity<Map<String, Object>>(resultMap, status);
-//	}
-//	
-//	@DeleteMapping("/delete/{tapeKey}")
-//	@ApiOperation("특정 테이프를 삭제합니다.")
-//	public ResponseEntity<?> dislikeTape(@PathVariable int tapeKey){
-//		
-//		HttpStatus status = HttpStatus.ACCEPTED;
-//
-//		try {
-//			service.deleteTape(tapeKey);
-//			status = HttpStatus.OK;
-//			return new ResponseEntity<>(status);
-//		} catch(Exception e) {
-//			status = HttpStatus.INTERNAL_SERVER_ERROR;
-//			return new ResponseEntity<String>(e.getMessage(), status);
-//		}
-//	}
-//	
-//	@PostMapping("/like")
-//	@ApiOperation("특정 테이프를 관심 리스트에 추가합니다.")
-//	public ResponseEntity<?> likeTape(@RequestParam int tapeKey, @RequestParam String userId){
-//		
-//		HttpStatus status = HttpStatus.ACCEPTED;
-//
-//		try {
-//			service.likeTape(tapeKey, userId);
-//			status = HttpStatus.CREATED;
-//			return new ResponseEntity<>(status);
-//		} catch(Exception e) {
-//			status = HttpStatus.INTERNAL_SERVER_ERROR;
-//			return new ResponseEntity<String>(e.getMessage(), status);
-//		}
-//	}
-//	@DeleteMapping("/dislike")
-//	@ApiOperation("특정 테이프를 관심 리스트에 삭제합니다.")
-//	public ResponseEntity<?> dislikeTape(@RequestParam int tapeKey, @RequestParam String userId){
-//		
-//		HttpStatus status = HttpStatus.ACCEPTED;
-//
-//		try {
-//			service.dislikeTape(tapeKey, userId);
-//			status = HttpStatus.OK;
-//			return new ResponseEntity<>(status);
-//		} catch(Exception e) {
-//			status = HttpStatus.INTERNAL_SERVER_ERROR;
-//			return new ResponseEntity<String>(e.getMessage(), status);
-//		}
-//	}
+	@GetMapping("/attraction")
+	@ApiOperation(value="레코드에 포함된 장소들 목록을 조회합니다.")
+	public ResponseEntity<?> recordAttraction(@RequestParam int tapeKey, @RequestParam(required=false)String keyword,@RequestParam(required=false) String word, @RequestParam int currentPage) {
+		
+		Map<String, Object> resultMap = new HashMap<>();
+		HttpStatus status = HttpStatus.ACCEPTED;
+		String message = "";
+		try {
+			int countPerPage = 10;
+			int start = (currentPage - 1) * countPerPage;
+			List<AttractionDto> attractionList = service.recordAttraction(tapeKey, keyword, word, start, countPerPage);
+			if(attractionList == null || attractionList.size() == 0) {
+				message = "조회할 데이터가 없습니다.";
+				status = HttpStatus.NO_CONTENT;
+				resultMap.put("message", message);
+			} else {
+				resultMap.put("attraction", attractionList);
+				status = HttpStatus.OK;
+			}
+		} catch(Exception e) {
+			message = e.getMessage();
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
+			resultMap.put("message", message);
+		}
+		return new ResponseEntity<Map<String, Object>>(resultMap, status);
+	}
+
+	@GetMapping("/search/{tapeKey}")
+	@ApiOperation(value="레코드에 포함된 장소들 목록을 조회합니다.")
+	public ResponseEntity<?> searchRecord(@PathVariable int tapeKey, @RequestParam(required=false)String keyword,@RequestParam(required=false) String word, @RequestParam int currentPage) {
+		
+		Map<String, Object> resultMap = new HashMap<>();
+		HttpStatus status = HttpStatus.ACCEPTED;
+		String message = "";
+		try {
+			int countPerPage = 10;
+			int start = (currentPage - 1) * countPerPage;
+			List<RecordDto> attractionList = service.searchRecord(tapeKey, keyword, word, start, countPerPage);
+			if(attractionList == null || attractionList.size() == 0) {
+				message = "조회할 데이터가 없습니다.";
+				status = HttpStatus.NO_CONTENT;
+				resultMap.put("message", message);
+			} else {
+				resultMap.put("attraction", attractionList);
+				status = HttpStatus.OK;
+			}
+		} catch(Exception e) {
+			message = e.getMessage();
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
+			resultMap.put("message", message);
+		}
+		return new ResponseEntity<Map<String, Object>>(resultMap, status);
+	}
+
+	
+	@GetMapping("/info/{recordKey}")
+	@ApiOperation("특정 레코드 정보를 조회합니다.")
+	public ResponseEntity<?> searchInfo(@PathVariable int recordKey){
+		
+		Map<String, Object> resultMap = new HashMap<>();
+		HttpStatus status = HttpStatus.ACCEPTED;
+		String message;
+
+		try {
+			RecordDto record = service.recordInfo(recordKey);
+
+			if(record == null) { 
+				message = "조회할 데이터가 없습니다.";
+				status = HttpStatus.NO_CONTENT;
+				resultMap.put("message", message);
+			} else {
+				resultMap.put("record", record);
+				status = HttpStatus.OK;
+			}
+		} catch(Exception e) {
+			message = e.getMessage();
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
+			resultMap.put("message", message);
+		}
+		return new ResponseEntity<Map<String, Object>>(resultMap, status);
+	}
+	
+	@PutMapping("/modify")
+	@ApiOperation(value="특정 레코드를 수정합니다.", consumes="multipart/form-data")
+	public ResponseEntity<?> modifyRecord(@RequestPart(value="record") RecordDto record, @RequestPart(value="file", required = false) MultipartFile file){
+		
+		Map<String, Object> resultMap = new HashMap<>();
+		HttpStatus status = HttpStatus.ACCEPTED;
+		String message;
+
+		try {
+			int result = service.modifyRecord(record, file);
+			if(result == 1) {
+				status = HttpStatus.OK;
+				RecordDto recordResult = service.recordInfo(record.getRecordKey());
+				resultMap.put("record", recordResult);
+			}else {
+				status = HttpStatus.NO_CONTENT;
+				message = "수정할 내용이 없습니다.";
+				resultMap.put("message", message);
+			}
+		} catch(Exception e) {
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
+			message = e.getMessage();
+		}
+		return new ResponseEntity<Map<String, Object>>(resultMap, status);
+	}
+	
+	@DeleteMapping("/delete/{recordKey}")
+	@ApiOperation("특정 테이프를 삭제합니다.")
+	public ResponseEntity<?> deleteRecord(@PathVariable int recordKey){
+		
+		HttpStatus status = HttpStatus.ACCEPTED;
+		String message;
+		Map<String, Object> resultMap = new HashMap<>();
+		
+		try {
+			int result = service.deleteRecord(recordKey);
+			if(result == 1) {
+				status = HttpStatus.OK;
+				return new ResponseEntity<>(status);
+			}else {
+				status = HttpStatus.NO_CONTENT;
+				message = "삭제할 내용이 없습니다.";
+				resultMap.put("message", message);
+			}
+		} catch(Exception e) {
+			message = e.getMessage();
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
+		}
+		return new ResponseEntity<String>(message, status);
+	}
+	
+	@PostMapping("/like")
+	@ApiOperation("특정 테이프를 관심 리스트에 추가합니다.")
+	public ResponseEntity<?> likeRecord(@RequestParam int recordKey, @RequestParam String userId){
+		
+		HttpStatus status = HttpStatus.ACCEPTED;
+
+		try {
+			service.likeRecord(recordKey, userId);
+			status = HttpStatus.CREATED;
+			return new ResponseEntity<>(status);
+		} catch(Exception e) {
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
+			return new ResponseEntity<String>(e.getMessage(), status);
+		}
+	}
+	@DeleteMapping("/dislike")
+	@ApiOperation("특정 테이프를 관심 리스트에 삭제합니다.")
+	public ResponseEntity<?> dislikeRecord(@RequestParam int recordKey, @RequestParam String userId){
+		
+		HttpStatus status = HttpStatus.ACCEPTED;
+
+		try {
+			service.dislikeRecord(recordKey, userId);
+			status = HttpStatus.OK;
+			return new ResponseEntity<>(status);
+		} catch(Exception e) {
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
+			return new ResponseEntity<String>(e.getMessage(), status);
+		}
+	}
 }

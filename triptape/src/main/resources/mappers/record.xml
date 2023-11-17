@@ -46,6 +46,7 @@
 		values (#{tapeKey}, #{content}, #{img.saveFile}, #{user.userId}, #{attraction.attractionKey},#{parentRecordKey})
 	</insert>
 	
+	
 
 
 </mapper>

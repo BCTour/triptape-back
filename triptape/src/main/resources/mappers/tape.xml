@@ -32,19 +32,25 @@
 		values (#{user.userId}, #{title}, #{description}, #{img.saveFile})
 	</insert>
 	
+	<sql id="countPopular">
+		select tape_key, count(*) as popular 
+		  from user_like_tape
+		 group by tape_key
+	</sql>
+	
 	
 	<select id="searchTopPopular" resultMap="tape">
 		select *, popular from tape a 
 				 left outer join user b on a.user_id = b.user_id
-				 left outer join (select tape_key, count(*) popular from user_like_tape
-				 							group by tape_key) c on a.tape_key = c.tape_key 
+				 left outer join (<include refid="countPopular" />) c on a.tape_key = c.tape_key 
 		order by c.popular desc, createtime desc
 		limit ${n}
 	</select>
 	
 	<select id="searchTopRecent" resultMap="tape">
-		select * from tape a 
+		select * , popular from tape a 
 				 left outer join user b on a.user_id = b.user_id
+				 left outer join (<include refid="countPopular" />) c on a.tape_key = c.tape_key 
 		order by createtime desc
 		limit ${n}
 	</select>
@@ -56,8 +62,9 @@
 	</sql>
 	
 	<select id="searchByCondition">
-		select * from tape a 
+		select *, popular from tape a 
 				 left outer join user b on a.user_id = b.user_id
+				 left outer join (<include refid="countPopular" />) c on a.tape_key = c.tape_key 
 		<where>
 			<include refid="condition" />
 		</where>
@@ -65,12 +72,13 @@
 	</select>
 	
 	<select id="tapeInfo" resultMap="tape">
-		select * from tape a left outer join user b on a.user_id = b.user_id
+		select *, popular from tape a left outer join user b on a.user_id = b.user_id
+							 left outer join (<include refid="countPopular" />) c on a.tape_key = c.tape_key 
 		where a.tape_key = #{tapeKey}
 	</select>
 	
 	<select id="getTotalListCount" resultType="int">
-		select count(*) from tape a left outer join user b on a.user_id = b.user_id
+		select count(*) from tape
 		<where>
 			<include refid="condition" />
 		</where>

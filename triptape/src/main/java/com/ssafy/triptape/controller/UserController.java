@@ -1,6 +1,7 @@
 package com.ssafy.triptape.controller;
 
 import java.io.IOException;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;

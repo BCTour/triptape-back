@@ -33,12 +33,13 @@ public class WebConfiguration implements WebMvcConfigurer {
 			.addMapping("/**")
 //			.allowedOrigins("*")
 			.allowedOrigins("http://localhost:8080", "http://localhost:5173", "http://localhost:5174")
-			.allowedMethods(HttpMethod.GET.name(), HttpMethod.POST.name(), HttpMethod.PUT.name(),
-						HttpMethod.DELETE.name(), HttpMethod.HEAD.name(), HttpMethod.OPTIONS.name(),
-						HttpMethod.PATCH.name())
-//			.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH", "HEAD")
+//			.allowedMethods(HttpMethod.GET.name(), HttpMethod.POST.name(), HttpMethod.PUT.name(),
+//						HttpMethod.DELETE.name(), HttpMethod.HEAD.name(), HttpMethod.OPTIONS.name(),
+//						HttpMethod.PATCH.name())
+			.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH", "HEAD")
 //			.allowCredentials(true)
-//			.exposedHeaders("*")
+			.allowedHeaders("Authorization", "Content-Type")
+			.exposedHeaders("*")
 			.maxAge(1800); // Pre-flight Caching
 	}
 
@@ -48,12 +49,13 @@ public class WebConfiguration implements WebMvcConfigurer {
 		.excludePathPatterns("/swagger-ui/**", "/swagger-resources/**","/v2/api-docs")
 		.excludePathPatterns("/user/login")
 		.excludePathPatterns("/user/regist")
-//		.excludePathPatterns("/attraction/search")
+//		.excludePathPatterns("/user/info")
 		.excludePathPatterns("/user/refresh")
 		.excludePathPatterns("/user/findpw")
 		.excludePathPatterns("/user/regist/pw")
 		.excludePathPatterns("/attraction/**")
 		.excludePathPatterns("/img/**")
+		.excludePathPatterns("/record/**")
 		.excludePathPatterns("/tape/**");
 	}
 

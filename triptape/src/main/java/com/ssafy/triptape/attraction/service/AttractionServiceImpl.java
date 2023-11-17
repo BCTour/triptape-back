@@ -29,12 +29,13 @@ public class AttractionServiceImpl implements AttractionService {
 		
 		attraction.setImg(new FileInfoDto());
 		Resource res = resLoader.getResource(attraction.getImg().getSaveFolder());
-		if (file != null && file.getSize() > 0) {
+
+		if (file != null && file.getSize() >= 0) {
 
 			String name = System.currentTimeMillis() + "_" + file.getOriginalFilename();
 			attraction.getImg().setSaveFile("http://localhost:8080/img/" + name);
 			attraction.getImg().setOriginalFile(file.getOriginalFilename());
-			
+
 			file.transferTo(new File(res.getFile().getCanonicalPath() + "/" + name));
 		}
 	}

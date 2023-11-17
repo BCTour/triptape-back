@@ -61,7 +61,7 @@
 		</if>
 	</sql>
 	
-	<select id="searchByCondition">
+	<select id="searchByCondition" resultMap="tape">
 		select *, popular from tape a 
 				 left outer join user b on a.user_id = b.user_id
 				 left outer join (<include refid="countPopular" />) c on a.tape_key = c.tape_key 

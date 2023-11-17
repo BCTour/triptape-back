@@ -46,13 +46,14 @@ public class AttractionController {
 	
 	@PostMapping(value ="/regist", consumes = "multipart/form-data") 
 	@ApiOperation("관광지를 등록합니다.")
-	public ResponseEntity<?> regist(@ApiParam(value = "관광지 정보", required = true) @RequestPart(value="attraction") AttractionDto attraction, 
-			@RequestPart String userId,
+	public ResponseEntity<?> registAttraction(
+			@ApiParam(value = "관광지 정보", required = true) @RequestPart(value="attraction") AttractionDto attraction, 
 			@RequestPart(name="file", required = false) MultipartFile file,
 			HttpServletRequest request) throws IllegalStateException, IOException {
 		
 		Map<String, Object> resultMap = new HashMap<>();
 		HttpStatus status = HttpStatus.ACCEPTED;
+		
 		String token = request.getHeader("Authorization");
 		
 		if(!jwtUtil.checkToken(token)) {
@@ -60,8 +61,8 @@ public class AttractionController {
 			status = HttpStatus.UNAUTHORIZED;
 			return new ResponseEntity<Map<String, Object>>(resultMap, status);
 		}
-		
-		if(!jwtUtil.getUserId(token).equals(userId)) {
+
+		if(!jwtUtil.getUserId(token).equals(attraction.getUserId())) {
 			resultMap.put("message", "사용자 정보가 일치하지 않습니다.");
 			status = HttpStatus.FORBIDDEN;
 			return new ResponseEntity<Map<String, Object>>(resultMap, status);
@@ -70,7 +71,7 @@ public class AttractionController {
 		try {
 			int result = service.regist(attraction, file);
 			if(result==1) return new ResponseEntity<Void>(HttpStatus.CREATED);
-			else return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
+			else return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
 		} catch(Exception e) {
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -78,7 +79,7 @@ public class AttractionController {
 	 
 	@GetMapping("/search") 
 	@ApiOperation("조건에 해당하는 관광지 정보를 반환합니다.")
-	public ResponseEntity<?> search(SearchCondition search){
+	public ResponseEntity<?> searchAttraction(SearchCondition search){
 		Map<String, Object> result = new HashMap<>();
 		HttpStatus status = HttpStatus.ACCEPTED;
 		
@@ -107,7 +108,7 @@ public class AttractionController {
 	
 	@GetMapping("/info/{attractionKey}")
 	@ApiOperation("관광지 상세 정보를 반환합니다.")
-	public ResponseEntity<?> info(@PathVariable int attractionKey ){
+	public ResponseEntity<?> infoAttraction(@PathVariable int attractionKey ){
 
 		String result;
 		HttpStatus status = HttpStatus.ACCEPTED;
@@ -131,11 +132,35 @@ public class AttractionController {
 	
 	@PutMapping(value="/modify",consumes = "multipart/form-data")
 	@ApiOperation(value="관광지 상세 정보를 수정합니다.")
-	public ResponseEntity<?> modify(@ApiParam(value = "관광지 정보", required = true) @RequestPart(value="attraction") AttractionDto attraction,
-									@RequestPart(name="file", required = false) MultipartFile file){
+	public ResponseEntity<?> modifyAttraction(
+			@ApiParam(value = "관광지 정보", required = true) @RequestPart(value="attraction") AttractionDto attraction,
+			@RequestPart(name="file", required = false) MultipartFile file,
+			HttpServletRequest request){
 	
 		HttpStatus status = HttpStatus.ACCEPTED;
 		Map<String, Object> resultMap = new HashMap<>();
+		String token = request.getHeader("Authorization");
+		
+		if(!jwtUtil.checkToken(token)) {
+			resultMap.put("message", "사용불가능한 토큰입니다.");
+			status = HttpStatus.UNAUTHORIZED;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
+		if(!jwtUtil.getUserId(token).equals(attraction.getUserId())) {
+			resultMap.put("message", "사용자 정보가 일치하지 않습니다.");
+			status = HttpStatus.FORBIDDEN;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
+		
+		AttractionDto info = service.info(attraction.getAttractionKey());
+		
+		
+		if(jwtUtil.getRole(token) == 0 && !attraction.getUserId().equals(info.getUserId())) {
+			resultMap.put("message", "사용자가 작성한 글이 아닙니다.");
+			status = HttpStatus.FORBIDDEN;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
+		
 		try {
 			attraction.setAttractionKey(attraction.getAttractionKey());
 			int result = service.modify(attraction, file);
@@ -154,10 +179,30 @@ public class AttractionController {
 		return new ResponseEntity<Map<String, Object>>(resultMap, status);
 	}
 	
-	@DeleteMapping("/delete/{attractionKey}")
+	@DeleteMapping("/delete/{attractionKey}/{userId}")
 	@ApiOperation("관광지 정보를 삭제합니다.")
-	public ResponseEntity<?> delete(@PathVariable int attractionKey){
+	public ResponseEntity<?> deleteAttraction(
+			@PathVariable int attractionKey,
+			@PathVariable String userId,
+			HttpServletRequest request){
+	
+		HttpStatus status = HttpStatus.ACCEPTED;
+		Map<String, Object> resultMap = new HashMap<>();
+		String token = request.getHeader("Authorization");
+		
+		if(!jwtUtil.checkToken(token)) {
+			resultMap.put("message", "사용불가능한 토큰입니다.");
+			status = HttpStatus.UNAUTHORIZED;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
+		
+		if(jwtUtil.getRole(token) == 0 && !jwtUtil.getUserId(token).equals(userId)) {
+			resultMap.put("message", "사용자 정보가 일치하지 않습니다.");
+			status = HttpStatus.FORBIDDEN;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
 
+		
 		try {
 			int result = service.delete(attractionKey);
 			if(result==1) return new ResponseEntity<Void>(HttpStatus.OK);

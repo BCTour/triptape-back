@@ -113,7 +113,7 @@ public class TapeController {
 		try {
 			List<TapeDto> tapeList = service.searchByCondition(keyword, word, start, countPerPage);
 			int totalCount = service.getTotalListCount(keyword, word);
-			
+
 			if(tapeList == null || tapeList.size() == 0) {
 				message = "조회할 데이터가 없습니다.";
 				status = HttpStatus.NO_CONTENT;

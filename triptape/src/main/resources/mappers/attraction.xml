@@ -8,6 +8,7 @@
 		<result column="latitude" property="latitude"/>
 		<result column="longitude" property="longitude"/>
 		<result column="description" property="description"/>
+		<result column="user_id" property="userId"/>
 		<association property="attractionType" javaType="com.ssafy.triptape.attraction.AttractionTypeDto">
 			<result column="type_code" property="typeCode" />
 			<result column="type_name" property="typeName" />
@@ -44,8 +45,8 @@
 	</sql>
 
 	<insert id="regist">
-		insert into attraction_info(type_code, name, address, latitude, longitude, description, img)
-		values(#{attractionType.typeCode}, #{name}, #{address}, #{latitude}, #{longitude}, #{description}, #{img.saveFile})
+		insert into attraction_info(type_code, name, address, latitude, longitude, description, img, user_id)
+		values(#{attractionType.typeCode}, #{name}, #{address}, #{latitude}, #{longitude}, #{description}, #{img.saveFile}, #{userId})
 	</insert>
 
 	<select id="search" resultMap="attraction">
@@ -71,8 +72,7 @@
 		select count(*)
 		from attraction_info a
 		<where>
-			<include refid="condition">
-			</include>
+			<include refid="condition" />
 		</where>
 
 	</select>	

@@ -107,5 +107,18 @@ public class JWTUtil {
 		log.info("value : {}", value);
 		return (String) value.get("userId");
 	}
+	
+	public int getRole(String authorization) {
+		Jws<Claims> claims = null;
+		try {
+			claims = Jwts.parser().setSigningKey(this.generateKey()).parseClaimsJws(authorization);
+		} catch (Exception e) {
+			log.error(e.getMessage());
+			throw new UnAuthorizedException();
+		}
+		Map<String, Object> value = claims.getBody();
+		log.info("value : {}", value);
+		return (int) value.get("role");
+	}
 
 }

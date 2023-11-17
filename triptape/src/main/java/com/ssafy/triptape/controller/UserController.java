@@ -167,16 +167,23 @@ public class UserController {
 		Map<String, Object> resultMap = new HashMap<>();
 		String token = request.getHeader("refreshToken");
 		HttpStatus status = HttpStatus.ACCEPTED;
-
+		
+		
 		if (jwtUtil.checkToken(token)) {
-			if (token.equals(service.getRefreshToken(userId))) {
-				UserDto user = service.userInfo(userId);
-				String accessToken = jwtUtil.createAccessToken(user.getIsAdmin(), userId);
-				resultMap.put("access-token", accessToken);
-				status = HttpStatus.CREATED;
-			} else {
-				status = HttpStatus.UNAUTHORIZED;
-				resultMap.put("message", "리프레시 토큰을 사용할 수 없습니다.");
+			if(jwtUtil.getUserId(token).equals(userId)) {		
+				if (token.equals(service.getRefreshToken(userId))) {
+					UserDto user = service.userInfo(userId);
+					String accessToken = jwtUtil.createAccessToken(user.getIsAdmin(), userId);
+					resultMap.put("access-token", accessToken);
+					status = HttpStatus.CREATED;
+				} else {
+					status = HttpStatus.UNAUTHORIZED;
+					resultMap.put("message", "리프레시 토큰을 사용할 수 없습니다.");
+				}
+			}
+			else {
+				status = HttpStatus.FORBIDDEN;
+				resultMap.put("message", "사용자 정보가 일치하지 않습니다.");
 			}
 		} else {
 			status = HttpStatus.UNAUTHORIZED;

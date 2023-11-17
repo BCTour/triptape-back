@@ -69,15 +69,25 @@ public class AttractionServiceImpl implements AttractionService {
 
 	@Override
 	@Transactional
-	public AttractionDto modify(AttractionDto attraction) {
-		repo.modify(attraction);
-		return repo.info(attraction.getAttractionKey());
+	public int modify(AttractionDto attraction, MultipartFile file) throws IOException {
+		fileHandling(attraction, file);	
+		return repo.modify(attraction);
 	}
 
 	@Override
 	@Transactional
 	public int delete(int attractionKey) {
 		return repo.delete(attractionKey);
+	}
+
+	@Override
+	public void likeAttraction(int attractionKey, String userId) {
+		repo.likeAttraction(attractionKey, userId);
+	}
+
+	@Override
+	public void dislikeAttraction(int attractionKey, String userId) {
+		repo.dislikeAttraction(attractionKey, userId);
 	}
 
 }

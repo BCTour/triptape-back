@@ -25,18 +25,18 @@
 	<sql id="condition">
 		<if test="typeCode != 0">
 			a.type_code = ${typeCode}
-			<if test="name != null">
+			<if test="name != null and !name.equals('')">
 				and name like concat('%', #{name}, '%')
 			</if> 
-			<if test="address != null">
+			<if test="address != null and !address.equals('')">
 				and address like concat('%', #{address}, '%')
 			</if>
 		</if>
 	 	<if test="typeCode == 0">
-			<if test="name != null">
+			<if test="name != null and !name.equals('')">
 				name like concat('%', #{name}, '%')
 			</if> 
-			<if test="address != null">
+			<if test="address != null and !address.equals('')">
 				address like concat('%', #{address}, '%')
 			</if>
 		</if>
@@ -53,6 +53,8 @@
 		<where>
 			<include refid="condition" ></include>
 		</where>
+		order by (6371*acos(cos(radians(${latitude}))*cos(radians(latitude))*cos(radians(longitude)
+    		-radians(${longitude}))+sin(radians(${latitude}))*sin(radians(latitude))))
 		limit ${start}, ${countPerPage}
 	</select>
 	
@@ -72,6 +74,7 @@
 			<include refid="condition">
 			</include>
 		</where>
+
 	</select>	
 	
 	<update id="modify">
@@ -80,11 +83,22 @@
 			address = #{address},
 			latitude = #{latitude},
 			longitude=#{longitude},
-			description=#{description}
+			description=#{description},
+			img=#{img.saveFile}
 		where attraction_key=#{attractionKey}
 	</update>
 	
 	<delete id="delete">
 		delete from attraction_info where attraction_key = #{attractionKey}
+	</delete>
+	
+	<insert id="likeAttraction">
+		insert into user_like_attraction(user_id, attraction_key)
+		values(#{userId}, #{attractionKey})
+	</insert>
+	
+	<delete id="dislikeAttraction">
+		update from user_like_attraction
+		where user_id = #{userId} and attraction_key = #{attractionKey}
 	</delete>
 </mapper>

@@ -62,9 +62,13 @@ public class AttractionController {
 
 			List<AttractionDto> list = service.search(search);
 			
+			if(search.getLatitude() == 0.0) {
+				search.setLatitude(37.501328668708); 	
+			}
+			if(search.getLongitude() == 0.0) search.setLongitude(127.03953821497);
+			
+			System.out.println(search);
 			if(list != null) {
-				quickSort(list, 0, list.size() - 1, search.getLatitude(), search.getLongitude());
-				
 				result.put("attraction", list);
 				result.put("totalCount", totalCount);
 				
@@ -105,17 +109,29 @@ public class AttractionController {
 	}
 	
 	
-	@PutMapping("/modify/{attractionKey}")
-	@ApiOperation("관광지 상세 정보를 수정합니다.")
-	public ResponseEntity<?> modify(@PathVariable int attractionKey,@RequestBody AttractionDto attraction ){
+	@PutMapping("/modify")
+	@ApiOperation(value="관광지 상세 정보를 수정합니다.",consumes = "multipart/form-data")
+	public ResponseEntity<?> modify(@ApiParam(value = "관광지 정보", required = true) @RequestPart(value="attraction") AttractionDto attraction,
+									@RequestPart(name="file", required = false) MultipartFile file){
 	
+		HttpStatus status = HttpStatus.ACCEPTED;
+		Map<String, Object> resultMap = new HashMap<>();
 		try {
-			attraction.setAttractionKey(attractionKey);
-			AttractionDto ret = service.modify(attraction);
-			return new ResponseEntity<AttractionDto>(ret, HttpStatus.OK);
+			attraction.setAttractionKey(attraction.getAttractionKey());
+			int result = service.modify(attraction, file);
+			if(result == 1) {
+				AttractionDto ret = service.info(attraction.getAttractionKey());				
+				resultMap.put("attraction", ret);
+				status = HttpStatus.OK;
+			} else {
+				resultMap.put("message", "수정한 내용이 없습니다.");
+				status = HttpStatus.NO_CONTENT;
+			}
 		} catch(Exception e) {
-			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+			resultMap.put("message", e.getMessage());
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
 		}
+		return new ResponseEntity<Map<String, Object>>(resultMap, status);
 	}
 	
 	@DeleteMapping("/delete/{attractionKey}")
@@ -130,39 +146,5 @@ public class AttractionController {
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
-	}
-	
-	
-	private void quickSort(List<AttractionDto> list, int s, int e, double userX, double userY) {
-		if(s < e) {
-			int p = partition(list, s, e, userX, userY);
-			quickSort(list, s, p - 1, userX, userY);
-			quickSort(list, p + 1, e, userX, userY);
-		}
-	}
-	
-	private int partition(List<AttractionDto> list, int s, int e, double userX, double userY) {
-		double p = calc(userX, list.get(s).getLatitude(), userY, list.get(s).getLongitude());
-		int l = s + 1;
-		int r = e;
-		
-		do {
-			while(l < e && calc(userX, list.get(l).getLatitude(), userY, list.get(l).getLongitude())< p) l++;
-			while(r > s && calc(userX, list.get(r).getLatitude(), userY, list.get(r).getLongitude())>= p) r--;
-			if(l < r) {
-				AttractionDto temp = list.get(l);
-	            list.set(l, list.get(r));
-	            list.set(r, temp);
-			}
-		} while(l < r);
-		AttractionDto temp = list.get(s);
-        list.set(s, list.get(r));
-        list.set(r, temp);
-		
-		return r;
-	}
-	
-	private double calc(double x, double x2, double y, double y2) {
-		return Math.sqrt(Math.pow(x - x2, 2) + Math.pow(y - y2, 2));
 	}
 }

@@ -22,4 +22,7 @@ public interface AttractionRepo {
 	
 	int modify(AttractionDto attraction);
 	int delete(int attractionKey);
+	
+	void likeAttraction(int attractionKey, String userId);
+	void dislikeAttraction(int attractionKey, String userId);
 }

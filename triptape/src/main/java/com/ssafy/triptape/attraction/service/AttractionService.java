@@ -16,6 +16,9 @@ public interface AttractionService {
 	List<AttractionTypeDto> searchType();
 	int getTotalListCount(SearchCondition search);
 	
-	AttractionDto modify(AttractionDto attraction);
+	int modify(AttractionDto attraction, MultipartFile file) throws IOException;
 	int delete(int attractionKey);
+	
+	void likeAttraction(int attractionKey, String userId);
+	void dislikeAttraction(int attractionKey, String userId);
 }

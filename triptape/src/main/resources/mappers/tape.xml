@@ -56,7 +56,7 @@
 	</select>
 	
 	<sql id="condition">
-		<if test="keyword != null">
+		<if test="keyword != null and !keyword.equals('')">
 			${keyword} like concat('%', #{word}, '%')
 		</if>
 	</sql>

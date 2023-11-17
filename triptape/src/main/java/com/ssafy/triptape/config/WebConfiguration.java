@@ -35,7 +35,7 @@ public class WebConfiguration implements WebMvcConfigurer {
 			.addMapping("/**")
 			.allowedOrigins("http://localhost:8080", "http://localhost:5173", "http://localhost:5174")
 			.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH", "HEAD")
-			.allowedHeaders("Authorization", "Content-Type")
+			.allowedHeaders("Authorization", "Content-Type", "refreshToken")
 			.exposedHeaders("*")
 			.maxAge(1800); // Pre-flight Caching
 	}

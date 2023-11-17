@@ -92,7 +92,7 @@ public class UserController {
 			UserDto loginUser = service.login(user.getUserId(), user.getUserPw());
 			
 			Object token = service.getRefreshToken(user.getUserId());
-			// 토큰이 존재하는 경우
+			// 토큰이 이미 존재하는 경우
 			if(token != null) {
 				service.deleteRefreshToken(user.getUserId());
 			}
@@ -106,6 +106,8 @@ public class UserController {
 				
 				resultMap.put("access-token", accessToken);
 				resultMap.put("refresh-token", refreshToken);
+				
+				status = HttpStatus.OK;
 			}
 			
 			else {
@@ -128,40 +130,47 @@ public class UserController {
 		Map<String, Object> resultMap = new HashMap<>();
 		HttpStatus status = HttpStatus.ACCEPTED;
 		
-		if (jwtUtil.checkToken(request.getHeader("Authorization"))) {
-			try {
-//				로그인 사용자 정보.
-				UserDto user = service.userInfo(userId);
-				if(user != null) {
-					resultMap.put("userInfo", user);
-					status = HttpStatus.OK;
-				} else {
-					status = HttpStatus.NO_CONTENT;
-				}
-		
-			} catch (Exception e) {
-				resultMap.put("message", e.getMessage());
-				status = HttpStatus.INTERNAL_SERVER_ERROR;
-			}
-		} else {
+		String token = request.getHeader("Authorization");
+		if(!jwtUtil.checkToken(token)) {
 			resultMap.put("message", "사용불가능한 토큰입니다.");
 			status = HttpStatus.UNAUTHORIZED;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
 		}
+		
+		if(!jwtUtil.getUserId(token).equals(userId)) {
+			resultMap.put("message", "사용자 정보가 일치하지 않습니다.");
+			status = HttpStatus.FORBIDDEN;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
+		
+		try {
+			UserDto user = service.userInfo(userId);
+			if(user != null) {
+				resultMap.put("userInfo", user);
+				status = HttpStatus.OK;
+			} else {
+				status = HttpStatus.NO_CONTENT;
+			}
+		
+		} catch (Exception e) {
+			resultMap.put("message", e.getMessage());
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
+		} 
 		
 		return new ResponseEntity<Map<String, Object>>(resultMap, status);
 	}
 
 	@ApiOperation(value = "Access Token 재발급", notes = "만료된 access token을 재발급받는다.", response = Map.class)
 	@PostMapping("/refresh")
-	public ResponseEntity<?> refreshToken(@RequestBody UserDto user, HttpServletRequest request)
+	public ResponseEntity<?> refreshToken(@RequestParam String userId, HttpServletRequest request)
 			throws Exception {
 		Map<String, Object> resultMap = new HashMap<>();
 		String token = request.getHeader("refreshToken");
 		HttpStatus status = HttpStatus.ACCEPTED;
-		
+		System.out.println(userId);
 		if (jwtUtil.checkToken(token)) {
-			if (token.equals(service.getRefreshToken(user.getUserId()))) {
-				String accessToken = jwtUtil.createAccessToken(user.getUserId());
+			if (token.equals(service.getRefreshToken(userId))) {
+				String accessToken = jwtUtil.createAccessToken(userId);
 				resultMap.put("access-token", accessToken);
 				status = HttpStatus.CREATED;
 			} else {
@@ -218,10 +227,24 @@ public class UserController {
 	
 	@ApiOperation(value ="회원 정보 수정", notes = "회원 정보를 수정한다.", consumes = "multipart/form-data")
 	@PutMapping("/modify")
-	public ResponseEntity<?> modify(@ApiParam(value = "사용자 정보", required = true) @RequestPart(value="user") UserDto user, @RequestPart(name="file", required = false) MultipartFile file) {
+	public ResponseEntity<?> modify(HttpServletRequest request, @ApiParam(value = "사용자 정보", required = true) @RequestPart(value="user") UserDto user, @RequestPart(name="file", required = false) MultipartFile file) {
 		HttpStatus status = HttpStatus.ACCEPTED;
 		Map<String, Object> resultMap = new HashMap<>();
 
+		String token = request.getHeader("Authorization");
+		if(!jwtUtil.checkToken(token)) {
+			resultMap.put("message", "사용불가능한 토큰입니다.");
+			status = HttpStatus.UNAUTHORIZED;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
+		
+		if(!jwtUtil.getUserId(token).equals(user.getUserId())) {
+			resultMap.put("message", "사용자 정보가 일치하지 않습니다.");
+			status = HttpStatus.FORBIDDEN;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
+		
+		
 		try {
 			int result = service.modify(user, file);
 			if(result == 1) {
@@ -230,8 +253,8 @@ public class UserController {
 				resultMap.put("userInfo", userInfo);
 			}
 			else {
-				resultMap.put("message", "수정 중 오류가 발생했습니다.");
-				status = HttpStatus.UNAUTHORIZED;
+				resultMap.put("message", "수정한 내용이 없습니다.");
+				status = HttpStatus.NO_CONTENT;
 			}
 		} catch (Exception e) {
 			status = HttpStatus.INTERNAL_SERVER_ERROR;

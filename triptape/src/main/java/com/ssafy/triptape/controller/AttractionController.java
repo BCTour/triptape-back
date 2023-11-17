@@ -196,8 +196,17 @@ public class AttractionController {
 			return new ResponseEntity<Map<String, Object>>(resultMap, status);
 		}
 		
-		if(jwtUtil.getRole(token) == 0 && !jwtUtil.getUserId(token).equals(userId)) {
+		if(!jwtUtil.getUserId(token).equals(userId)) {
 			resultMap.put("message", "사용자 정보가 일치하지 않습니다.");
+			status = HttpStatus.FORBIDDEN;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
+		
+		AttractionDto info = service.info(attractionKey);
+		
+		
+		if(jwtUtil.getRole(token) == 0 && !userId.equals(info.getUserId())) {
+			resultMap.put("message", "사용자가 작성한 글이 아닙니다.");
 			status = HttpStatus.FORBIDDEN;
 			return new ResponseEntity<Map<String, Object>>(resultMap, status);
 		}
@@ -206,7 +215,7 @@ public class AttractionController {
 		try {
 			int result = service.delete(attractionKey);
 			if(result==1) return new ResponseEntity<Void>(HttpStatus.OK);
-			else return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
+			else return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
 		} catch(Exception e) {
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -214,28 +223,83 @@ public class AttractionController {
 	}
 	
 	
-	@PostMapping("/like")
+	@PostMapping("/like/{attractionKey}/{userId}")
 	@ApiOperation("관광지 정보 좋아요!")
-	public ResponseEntity<?> likeAttraction(@RequestParam int attractionKey, @RequestParam String userId ){
+	public ResponseEntity<?> likeAttraction(
+			@PathVariable int attractionKey, 
+			@PathVariable String userId,
+			HttpServletRequest request){
 
+		String token = request.getHeader("Authorization");
+		Map<String, Object> resultMap = new HashMap<>();
+		HttpStatus status = HttpStatus.ACCEPTED;
+		
+		
+		if(!jwtUtil.checkToken(token)) {
+			resultMap.put("message", "사용불가능한 토큰입니다.");
+			status = HttpStatus.UNAUTHORIZED;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
+
+		if(!jwtUtil.getUserId(token).equals(userId)) {
+			resultMap.put("message", "사용자 정보가 일치하지 않습니다.");
+			status = HttpStatus.FORBIDDEN;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
+		
 		try {
-			service.likeAttraction(attractionKey, userId);;
-			return new ResponseEntity<Void>(HttpStatus.OK);
+
+			if(service.isLikeAttraction(attractionKey, userId)) {
+				resultMap.put("message", "이미 좋아요를 하였습니다.");
+				return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.CONFLICT);
+			}
+			
+			int result = service.likeAttraction(attractionKey, userId);
+			if(result == 1) return new ResponseEntity<Void>(HttpStatus.OK);
+			else {
+				resultMap.put("message","내용이 없습니다.");
+				return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.NO_CONTENT);
+			}
 		} catch(Exception e) {
-			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+			resultMap.put("message",e.getMessage());
+			return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
 	}
 	
-	@DeleteMapping("/dislike")
+	@DeleteMapping("/dislike/{attractionKey}/{userId}")
 	@ApiOperation("관광지 정보 좋아요 취소!")
-	public ResponseEntity<?> dislikeAttraction(@RequestParam int attractionKey, @RequestParam String userId){
+	public ResponseEntity<?> dislikeAttraction(
+			@PathVariable int attractionKey, 
+			@PathVariable String userId,
+			HttpServletRequest request){
+
+		String token = request.getHeader("Authorization");
+		Map<String, Object> resultMap = new HashMap<>();
+		HttpStatus status = HttpStatus.ACCEPTED;
+		
+		if(!jwtUtil.checkToken(token)) {
+			resultMap.put("message", "사용불가능한 토큰입니다.");
+			status = HttpStatus.UNAUTHORIZED;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
+
+		if(!jwtUtil.getUserId(token).equals(userId)) {
+			resultMap.put("message", "사용자 정보가 일치하지 않습니다.");
+			status = HttpStatus.FORBIDDEN;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
 
 		try {
-			service.dislikeAttraction(attractionKey, userId);
-			return new ResponseEntity<Void>(HttpStatus.OK);
+			int result = service.dislikeAttraction(attractionKey, userId);
+			if(result == 1) return new ResponseEntity<Void>(HttpStatus.OK);
+			else {		
+				resultMap.put("message","이미 좋아요가 취소되었습니다.");
+				return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.NO_CONTENT);
+			}
 		} catch(Exception e) {
-			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+			resultMap.put("message",e.getMessage());
+			return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
 	}

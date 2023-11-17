@@ -39,4 +39,5 @@ public class AttractionDto {
 	private FileInfoDto img;
 	@ApiModelProperty(value ="사용자 아이디")
 	private String userId;
+
 }

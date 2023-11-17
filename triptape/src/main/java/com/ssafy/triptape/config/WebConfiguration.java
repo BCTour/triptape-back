@@ -40,25 +40,25 @@ public class WebConfiguration implements WebMvcConfigurer {
 			.maxAge(1800); // Pre-flight Caching
 	}
 
-	private static final String[] INTERCEPTOR_WHITE_LIST = {
-			"/swagger-ui/**", "/swagger-resources/**","/v2/api-docs",
-			"/user/login",
-			"/user/regist",
-			"/user/refresh",
-			"/user/findpw",
-			"/user/regist/pw",
-			"/attraction/**",
-			"/img/**",
-			"/record/**",
-			"/tape/**",
-			"/error/**"
-	};
-	
-//	@Override
-	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(jwtInterceptor)
-		.excludePathPatterns(INTERCEPTOR_WHITE_LIST);
-	}
+//	private static final String[] INTERCEPTOR_WHITE_LIST = {
+//			"/swagger-ui/**", "/swagger-resources/**","/v2/api-docs",
+//			"/user/login",
+//			"/user/regist",
+//			"/user/refresh",
+//			"/user/findpw",
+//			"/user/regist/pw",
+//			"/attraction/**",
+//			"/img/**",
+//			"/record/**",
+//			"/tape/**",
+//			"/error/**"
+//	};
+//	
+////	@Override
+//	public void addInterceptors(InterceptorRegistry registry) {
+//		registry.addInterceptor(jwtInterceptor)
+//		.excludePathPatterns(INTERCEPTOR_WHITE_LIST);
+//	}
 
 //	Swagger UI 실행시 404처리
 //	Swagger2 일경우

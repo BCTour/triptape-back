@@ -128,6 +128,12 @@ public class UserController {
 		Map<String, Object> resultMap = new HashMap<>();
 		HttpStatus status = HttpStatus.ACCEPTED;
 		
+//		System.out.println("---REQUEST START---");
+//	    Enumeration<String> headerNames = request.getHeaderNames();
+//	    while(headerNames.hasMoreElements()) {
+//	    	System.out.println(headerNames.nextElement() + " " + request.getHeader(headerNames.nextElement()) );
+//	    }
+//	    System.out.println("---REQUEST END ---");
 		if (jwtUtil.checkToken(request.getHeader("Authorization"))) {
 			try {
 //				로그인 사용자 정보.

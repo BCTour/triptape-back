@@ -1,5 +1,6 @@
 package com.ssafy.triptape.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
 import org.springframework.http.HttpMethod;
@@ -15,6 +16,7 @@ import com.ssafy.triptape.common.interceptor.JWTInterceptor;
 @EnableWebMvc
 public class WebConfiguration implements WebMvcConfigurer {
 	
+	@Autowired
 	private JWTInterceptor jwtInterceptor;
 
 	public WebConfiguration(JWTInterceptor jwtInterceptor) {
@@ -31,32 +33,31 @@ public class WebConfiguration implements WebMvcConfigurer {
 //		Set max age to 1800 seconds (30 minutes).
 		registry
 			.addMapping("/**")
-//			.allowedOrigins("*")
 			.allowedOrigins("http://localhost:8080", "http://localhost:5173", "http://localhost:5174")
-//			.allowedMethods(HttpMethod.GET.name(), HttpMethod.POST.name(), HttpMethod.PUT.name(),
-//						HttpMethod.DELETE.name(), HttpMethod.HEAD.name(), HttpMethod.OPTIONS.name(),
-//						HttpMethod.PATCH.name())
 			.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH", "HEAD")
-//			.allowCredentials(true)
 			.allowedHeaders("Authorization", "Content-Type")
 			.exposedHeaders("*")
 			.maxAge(1800); // Pre-flight Caching
 	}
 
+	private static final String[] INTERCEPTOR_WHITE_LIST = {
+			"/swagger-ui/**", "/swagger-resources/**","/v2/api-docs",
+			"/user/login",
+			"/user/regist",
+			"/user/refresh",
+			"/user/findpw",
+			"/user/regist/pw",
+			"/attraction/**",
+			"/img/**",
+			"/record/**",
+			"/tape/**",
+			"/error/**"
+	};
+	
 //	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(jwtInterceptor)
-		.excludePathPatterns("/swagger-ui/**", "/swagger-resources/**","/v2/api-docs")
-		.excludePathPatterns("/user/login")
-		.excludePathPatterns("/user/regist")
-//		.excludePathPatterns("/user/info")
-		.excludePathPatterns("/user/refresh")
-		.excludePathPatterns("/user/findpw")
-		.excludePathPatterns("/user/regist/pw")
-		.excludePathPatterns("/attraction/**")
-		.excludePathPatterns("/img/**")
-		.excludePathPatterns("/record/**")
-		.excludePathPatterns("/tape/**");
+		.excludePathPatterns(INTERCEPTOR_WHITE_LIST);
 	}
 
 //	Swagger UI 실행시 404처리

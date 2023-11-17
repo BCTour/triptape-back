@@ -35,8 +35,8 @@ public class RecordController {
 	@Autowired
 	private RecordService service;
 	
-	@PostMapping("/regist")
-	@ApiOperation(value="레코드를 등록합니다.", consumes="multipart/form-data")
+	@PostMapping(value="/regist", consumes="multipart/form-data")
+	@ApiOperation(value="레코드를 등록합니다.")
 	public ResponseEntity<?> registRecord(@RequestPart(value="record") RecordDto record, @RequestPart(value="file", required = false) MultipartFile file) {
 		
 		try {
@@ -130,8 +130,8 @@ public class RecordController {
 		return new ResponseEntity<Map<String, Object>>(resultMap, status);
 	}
 	
-	@PutMapping("/modify")
-	@ApiOperation(value="특정 레코드를 수정합니다.", consumes="multipart/form-data")
+	@PutMapping(value="/modify", consumes="multipart/form-data")
+	@ApiOperation(value="특정 레코드를 수정합니다.")
 	public ResponseEntity<?> modifyRecord(@RequestPart(value="record") RecordDto record, @RequestPart(value="file", required = false) MultipartFile file){
 		
 		Map<String, Object> resultMap = new HashMap<>();

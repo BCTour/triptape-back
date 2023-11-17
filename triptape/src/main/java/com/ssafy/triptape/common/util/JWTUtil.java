@@ -28,13 +28,13 @@ public class JWTUtil {
 	@Value("${jwt.refresh-token.expiretime}")
 	private long refreshTokenExpireTime;
 
-	public String createAccessToken(String userId) {
-		return create(userId, "access-token", accessTokenExpireTiem);
+	public String createAccessToken(int role, String userId) {
+		return create(role, userId, "access-token", accessTokenExpireTiem);
 	}
 
 //	AccessToken에 비해 유효기간을 길게 설정.
-	public String createRefreshToken(String userId) {
-		return create(userId, "refresh-token", refreshTokenExpireTime);
+	public String createRefreshToken(int role, String userId) {
+		return create(role, userId, "refresh-token", refreshTokenExpireTime);
 	}
 
 //	Token 발급
@@ -43,7 +43,7 @@ public class JWTUtil {
 //		subject : payload에 sub의 value로 들어갈 subject값
 //		expire : 토큰 유효기간 설정을 위한 값
 //		jwt 토큰의 구성 : header + payload + signature
-	private String create(String userId, String subject, long expireTime) {
+	private String create(int role, String userId, String subject, long expireTime) {
 //		Payload 설정 : 생성일 (IssuedAt), 유효기간 (Expiration), 
 //		토큰 제목 (Subject), 데이터 (Claim) 등 정보 세팅.
 		Claims claims = Jwts.claims()
@@ -53,6 +53,7 @@ public class JWTUtil {
 
 //		저장할 data의 key, value
 		claims.put("userId", userId);
+		claims.put("role", role);
 
 		String jwt = Jwts.builder()
 			.setHeaderParam("typ", "JWT").setClaims(claims) // Header 설정 : 토큰의 타입, 해쉬 알고리즘 정보 세팅.

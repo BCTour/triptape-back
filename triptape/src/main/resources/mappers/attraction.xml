@@ -98,7 +98,6 @@
 	</insert>
 	
 	<delete id="dislikeAttraction">
-		update from user_like_attraction
-		where user_id = #{userId} and attraction_key = #{attractionKey}
+		delete from user_like_attraction where user_id= #{userId} and attraction_key= #{attractionKey}
 	</delete>
 </mapper>

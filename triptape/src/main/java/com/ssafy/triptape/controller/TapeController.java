@@ -35,8 +35,8 @@ public class TapeController {
 	@Autowired
 	private TapeService service;
 	
-	@PostMapping("/regist")
-	@ApiOperation(value="테이프를 등록합니다.", consumes="multipart/form-data")
+	@PostMapping(value="/regist", consumes="multipart/form-data")
+	@ApiOperation(value="테이프를 등록합니다.")
 	public ResponseEntity<?> registTape(@RequestPart(value="tape") TapeDto tape, @RequestPart(value="file", required = false) MultipartFile file) {
 		
 		try {
@@ -159,8 +159,8 @@ public class TapeController {
 		return new ResponseEntity<Map<String, Object>>(resultMap, status);
 	}
 	
-	@PutMapping("/modify")
-	@ApiOperation(value="특정 테이프를 수정합니다.", consumes="multipart/form-data")
+	@PutMapping(value="/modify", consumes="multipart/form-data")
+	@ApiOperation(value="특정 테이프를 수정합니다.")
 	public ResponseEntity<?> modifyTape(@RequestPart(value="tape") TapeDto tape, @RequestPart(value="file", required = false) MultipartFile file){
 		
 		Map<String, Object> resultMap = new HashMap<>();

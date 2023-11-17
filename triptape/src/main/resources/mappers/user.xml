@@ -24,7 +24,7 @@
 	</insert>
 	
 	<select id="login" resultMap="user">
-		select user_id, user_name from user where user_id = #{userId} and user_pw = #{userPw}
+		select user_id, user_name, is_admin from user where user_id = #{userId} and user_pw = #{userPw}
 	</select>
 	
 	<select id="getSalt" resultType="String">

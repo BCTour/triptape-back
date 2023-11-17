@@ -99,8 +99,8 @@ public class UserController {
 			
 			if(loginUser != null) {
 
-				String accessToken = jwtUtil.createAccessToken(loginUser.getUserId());
-				String refreshToken = jwtUtil.createRefreshToken(loginUser.getUserId());
+				String accessToken = jwtUtil.createAccessToken(loginUser.getIsAdmin(), loginUser.getUserId());
+				String refreshToken = jwtUtil.createRefreshToken(loginUser.getIsAdmin(), loginUser.getUserId());
 				
 				service.saveRefreshToken(loginUser.getUserId(), refreshToken);
 				
@@ -170,7 +170,8 @@ public class UserController {
 
 		if (jwtUtil.checkToken(token)) {
 			if (token.equals(service.getRefreshToken(userId))) {
-				String accessToken = jwtUtil.createAccessToken(userId);
+				UserDto user = service.userInfo(userId);
+				String accessToken = jwtUtil.createAccessToken(user.getIsAdmin(), userId);
 				resultMap.put("access-token", accessToken);
 				status = HttpStatus.CREATED;
 			} else {

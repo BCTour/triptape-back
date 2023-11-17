@@ -37,4 +37,6 @@ public class AttractionDto {
 	private String description;
 	@ApiModelProperty(value = "관광지 이미지")
 	private FileInfoDto img;
+	@ApiModelProperty(value ="사용자 아이디")
+	private String userId;
 }

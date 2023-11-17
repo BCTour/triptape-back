@@ -167,7 +167,7 @@ public class UserController {
 		Map<String, Object> resultMap = new HashMap<>();
 		String token = request.getHeader("refreshToken");
 		HttpStatus status = HttpStatus.ACCEPTED;
-		System.out.println(userId);
+
 		if (jwtUtil.checkToken(token)) {
 			if (token.equals(service.getRefreshToken(userId))) {
 				String accessToken = jwtUtil.createAccessToken(userId);
@@ -195,6 +195,7 @@ public class UserController {
 		try {
 			service.deleteRefreshToken(userId);
 			status = HttpStatus.OK;
+			return new ResponseEntity<Void>(status);
 		} catch (Exception e) {
 			resultMap.put("message", e.getMessage());
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
@@ -204,14 +205,28 @@ public class UserController {
 	
 	@ApiOperation(value ="회원 정보 삭제", notes = "회원 정보를 삭제한다.", response = Map.class)
 	@DeleteMapping("/delete")
-	public ResponseEntity<?> delete(@RequestBody UserDto user) {
+	public ResponseEntity<?> delete(HttpServletRequest request, @RequestBody UserDto user) {
 		HttpStatus status = HttpStatus.ACCEPTED;
 		Map<String, Object> resultMap = new HashMap<>();
 
+		String token = request.getHeader("Authorization");
+		if(!jwtUtil.checkToken(token)) {
+			resultMap.put("message", "사용불가능한 토큰입니다.");
+			status = HttpStatus.UNAUTHORIZED;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
+		
+		if(!jwtUtil.getUserId(token).equals(user.getUserId())) {
+			resultMap.put("message", "사용자 정보가 일치하지 않습니다.");
+			status = HttpStatus.FORBIDDEN;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
+		
 		try {
 			int result = service.deleteUser(user.getUserId(), user.getUserPw());
 			if(result == 1) {
-				resultMap.put("message", "삭제가 완료되었습니다.");
+				status = HttpStatus.OK;
+				return new ResponseEntity<>(status);
 			}
 			else {
 				resultMap.put("message", "아이디 또는 패스워드를 확인해주세요.");
@@ -243,7 +258,6 @@ public class UserController {
 			status = HttpStatus.FORBIDDEN;
 			return new ResponseEntity<Map<String, Object>>(resultMap, status);
 		}
-		
 		
 		try {
 			int result = service.modify(user, file);
@@ -294,7 +308,7 @@ public class UserController {
 		Map<String, Object> resultMap = new HashMap<>();
 		try {
 			UserDto userInfo = service.searchByEmail(user.getEmail());
-			if(user != null) {
+			if(userInfo != null) {
 				service.updatePw(userInfo.getUserId(), user.getUserPw());
 				resultMap.put("message", "비밀번호 재설정을 완료하였습니다.");
 				status = HttpStatus.OK;

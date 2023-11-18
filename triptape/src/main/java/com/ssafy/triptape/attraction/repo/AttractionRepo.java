@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 import com.ssafy.triptape.attraction.AttractionDto;
 import com.ssafy.triptape.attraction.AttractionTypeDto;
 import com.ssafy.triptape.attraction.SearchCondition;
+import com.ssafy.triptape.record.RecordDto;
 import com.ssafy.triptape.tape.TapeDto;
 
 /**
@@ -28,6 +29,6 @@ public interface AttractionRepo {
 	int dislikeAttraction(int attractionKey, String userId);
 	
 	boolean isLikeAttraction(int attractionKey, String userId);
-
-	
+	List<AttractionDto> userLikeAttraction(String userId);
+	int userReportAttraction(String userId, int attractionKey);
 }

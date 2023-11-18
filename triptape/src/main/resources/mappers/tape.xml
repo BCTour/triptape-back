@@ -131,5 +131,20 @@
 		  left outer join (<include refid="countPopular" />) f on a.tape_key = f.tape_key
 	     where d.attraction_key = #{attractionKey}	
 	</select>
+		
+	<select id="userJoinTape" resultMap="tape">
+		select distinct a.* 
+		  from tape a
+		  join record b on a.tape_key = b.tape_key
+		 where b.user_id = #{userId}
+		 order by a.createtime desc
+	</select>
+	
+	<select id="userLikeTape" resultMap="tape">
+		select a.* from tape a
+				 join user_like_tape b on a.tape_key = b.tape_key
+		 where b.user_id = #{userId}
+		 order by a.createtime desc
+	</select>
 
 </mapper>

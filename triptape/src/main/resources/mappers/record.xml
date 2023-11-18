@@ -8,6 +8,7 @@
 		<result column="latitude" property="latitude"/>
 		<result column="longitude" property="longitude"/>
 		<result column="description" property="description"/>
+		<result column="attractionUserId" property="userId"/>
 		<association property="attractionType" javaType="com.ssafy.triptape.attraction.AttractionTypeDto">
 			<result column="type_code" property="typeCode" />
 			<result column="type_name" property="typeName" />
@@ -36,15 +37,20 @@
 		<result column="content" property="content" />
 		<result column="createtime" property="createtime" />
 		<result column="likeNum" property="likeNum"/>
+		<result column="parent_record_key" property="parentRecordKey"/>
 		<collection property="attraction" resultMap="attraction" />
 		<collection property="img" resultMap="img" />
 		<collection property="user" resultMap="user" />
 	</resultMap>
 
+	<select id="countRecord">
+		select count(*) from record
+		where tape_key = #{tapeKey}
+	</select>
 
 	<insert id="registRecord">
-		insert into record(tape_key, content, img, user_id, attraction_key, parent_record_key)
-		values (#{tapeKey}, #{content}, #{img.saveFile}, #{user.userId}, #{attraction.attractionKey}, IF(${parentRecordKey} = 0, NULL, #{parentRecordKey}))
+		insert into record(record_key, tape_key, content, img, user_id, attraction_key, parent_record_key)
+		values (#{recordKey}, #{tapeKey}, #{content}, #{img.saveFile}, #{user.userId}, #{attraction.attractionKey}, IF(${parentRecordKey} = 0, NULL, #{parentRecordKey}))
 	</insert>
 	
 	<sql id="likeNum">
@@ -54,7 +60,7 @@
 	</sql>
 	
 	<select id="recordAttraction" resultMap="attraction">
-		select distinct c.*, d.*, c.img 'attractionImg'
+		select distinct c.*, d.*, c.img 'attractionImg', c.user_id 'attractionUserId'
 		  from record a 
 		  join attraction_info c on a.attraction_key = c.attraction_key
 		  join attraction_type d on c.type_code = d.type_code
@@ -66,7 +72,7 @@
 	</select>
 	
 	<select id="searchRecord" resultMap="record">
-		select *, c.img 'attractionImg'
+		select *, c.img 'attractionImg', c.user_id 'attractionUserId'
 		  from record a
 		  left outer join user b 		   on a.user_id = b.user_id
 		  left outer join attraction_info c on a.attraction_key = c.attraction_key
@@ -81,17 +87,18 @@
 	</select>
 	
 	<select id="recordInfo" resultMap="record">
-		select *, c.img 'attractionImg'
+		select *, c.img 'attractionImg', c.user_id 'attractionUserId'
 		  from record a
 		  left outer join user b 		   on a.user_id = b.user_id
 		  left outer join attraction_info c on a.attraction_key = c.attraction_key
 		  left outer join attraction_type d on c.type_code = d.type_code
 		  left outer join (<include refid="likeNum" />) e on a.record_key = e.record_key 
-		 where a.record_key = #{recordKey} 
+		  where a.tape_key = ${tapeKey}
+		   and a.record_key = ${recordKey}
 	</select>
 	
 	<delete id="deleteRecord">
-		delete from record where record_key = #{record_key}
+		delete from record where tape_key=#{tapeKey} and record_key = #{recordKey}
 	</delete>
 	
 	<update id="modifyRecord">
@@ -100,17 +107,28 @@
 		   	   img = #{img.saveFile},
 		   	   attraction_key = #{attraction.attractionKey},
 		   	   parent_record_key=IF(${parentRecordKey} = 0, NULL, #{parentRecordKey})
-		 where record_key=#{recordKey}
+		 where tape_key=#{tapeKey} and record_key=#{recordKey}
 	</update>
 	
 	<insert id="likeRecord">
-		insert into user_like_record(user_id, record_key) values(#{userId}, #{recordKey})
+		insert into user_like_record(user_id, tape_key, record_key) values(#{userId}, #{tapeKey},#{recordKey})
 	</insert>
 	
 	<delete id="dislikeRecord">
-		delete from user_like_record where user_id=#{userId} and record_key=#{recordKey}
+		delete from user_like_record where user_id=#{userId} and tape_key=#{tapeKey} and record_key=#{recordKey}
 	</delete>
 	
+	<select id="isLikeRecord" resultType="boolean">
+		select count(*) from user_like_record
+		where user_id= #{userId} and tape_key= #{tapeKey} and record_key=#{recordKey}
+	</select>
 
-
+	<select id = "userLikeRecord" resultMap="record">
+		select a.*, c.*, d.* from record a
+				   join user_like_record b on a.record_key = b.record_key and a.tape_key = b.tape_key
+				   left outer join attraction_info c on a.attraction_key = c.attraction_key
+				   left outer join attraction_type d on c.type_code = d.type_code
+	    where b.user_id = #{userId}
+	    order by a.createtime
+	</select>
 </mapper>

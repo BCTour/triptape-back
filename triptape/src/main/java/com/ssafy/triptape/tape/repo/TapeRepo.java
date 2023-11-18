@@ -21,10 +21,12 @@ public interface TapeRepo {
 	int likeTape(int tapeKey, String userId);
 	int dislikeTape(int tapeKey, String userId);
 	boolean isLikeTape(int tapeKey, String userId);
-	
-	
+
 	int updateView(int tapeKey);
 	int updateJoin(int tapeKey);
 	List<TapeDto> attractionTape(int attractionKey);
+	
+	List<TapeDto> userJoinTape(String userId);
+	List<TapeDto> userLikeTape(String userId);
 	
 }

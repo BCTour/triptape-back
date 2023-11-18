@@ -107,5 +107,15 @@
 		where user_id= #{userId} and attraction_key= #{attractionKey}
 	</select>
 
+	<select id="userLikeAttraction" resultMap="attraction">
+		select a.*, c.* from attraction_info a
+				 		join user_like_attraction b on a.attraction_key = b.attraction_key
+				 		join attraction_type c on a.type_code = c.type_code
+		 where b.user_id = #{userId} 
+	</select>
+	
+	<insert id="userReportAttraction">
+		insert into user_report_attraction values(#{userId}, #{attractionKey});
+	</insert>
 	
 </mapper>

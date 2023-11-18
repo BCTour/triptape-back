@@ -137,6 +137,12 @@ public class AttractionCommentController {
 
 		AttractionComment info = service.commentInfo(comment.getCommentKey());
 
+		if(info == null) {
+			resultMap.put("message", "존재하지 않는 댓글입니다.");
+			status = HttpStatus.NOT_FOUND;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
+		
 		if(jwtUtil.getRole(token) == 0 && !comment.getUser().getUserId().equals(info.getUser().getUserId())) {
 			resultMap.put("message", "사용자가 작성한 글이 아닙니다.");
 			status = HttpStatus.FORBIDDEN;
@@ -188,7 +194,7 @@ public class AttractionCommentController {
 		AttractionComment info = service.commentInfo(commentKey);
 
 		if(info == null) {
-			resultMap.put("message", "이미 삭제된 글입니다.");
+			resultMap.put("message", "존재하지 않는 댓글입니다.");
 			status = HttpStatus.NOT_FOUND;
 			return new ResponseEntity<Map<String, Object>>(resultMap, status);
 		}

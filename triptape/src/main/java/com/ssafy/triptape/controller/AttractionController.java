@@ -154,6 +154,12 @@ public class AttractionController {
 		
 		AttractionDto info = service.info(attraction.getAttractionKey());
 		
+		if(info == null) {
+			resultMap.put("message", "등록되지 않는 장소입니다.");
+			status = HttpStatus.NOT_FOUND;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
+			
 		if(jwtUtil.getRole(token) == 0 && !attraction.getUserId().equals(info.getUserId())) {
 			resultMap.put("message", "사용자가 작성한 글이 아닙니다.");
 			status = HttpStatus.FORBIDDEN;
@@ -204,7 +210,7 @@ public class AttractionController {
 		AttractionDto info = service.info(attractionKey);
 		
 		if(info == null) {
-			resultMap.put("message", "이미 삭제된 글입니다.");
+			resultMap.put("message", "등록되지 않는 장소입니다.");
 			status = HttpStatus.NOT_FOUND;
 			return new ResponseEntity<Map<String, Object>>(resultMap, status);
 		}

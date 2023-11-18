@@ -42,6 +42,8 @@ public class RecordServiceImpl implements RecordService {
 	@Override
 	public int registRecord(RecordDto record, MultipartFile file) throws IllegalStateException, IOException {
 		fileHandling(record,file);
+		int recordKey = repo.countRecord(record.getTapeKey());
+		record.setRecordKey(recordKey + 1);
 		return repo.registRecord(record);
 	}
 
@@ -56,27 +58,34 @@ public class RecordServiceImpl implements RecordService {
 	}
 
 	@Override
-	public RecordDto recordInfo(int recordKey) {
-		return repo.recordInfo(recordKey);
+	public RecordDto recordInfo(int tapeKey, int recordKey) {
+		return repo.recordInfo(tapeKey, recordKey);
 	}
 	@Override
-	public int deleteRecord(int recordKey) {
-		return repo.deleteRecord(recordKey);
+	public int deleteRecord(int tapeKey, int recordKey) {
+		return repo.deleteRecord(tapeKey, recordKey);
 	}
 
 	@Override
 	public int modifyRecord(RecordDto record, MultipartFile file) throws IllegalStateException, IOException {
+		fileHandling(record, file);
 		return repo.modifyRecord(record);
 	}
 
 	@Override
-	public void likeRecord(int recordKey, String userId) {
-		repo.likeRecord(recordKey, userId);
+	public int likeRecord(int tapeKey, int recordKey, String userId) {
+		return repo.likeRecord(tapeKey, recordKey, userId);
 	}
 
 	@Override
-	public void dislikeRecord(int recordKey, String userId) {
-		repo.dislikeRecord(recordKey, userId);
+	public int dislikeRecord(int tapeKey, int recordKey, String userId) {
+		return repo.dislikeRecord(tapeKey, recordKey, userId);
+	}
+
+
+	@Override
+	public boolean isLikeRecord(int tapeKey, int recordKey, String userId) {
+		return repo.isLikeRecord(tapeKey, recordKey, userId);
 	}
 
 	

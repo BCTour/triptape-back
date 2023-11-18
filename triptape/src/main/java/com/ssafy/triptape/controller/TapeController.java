@@ -216,6 +216,12 @@ public class TapeController {
 		
 		TapeDto info = service.tapeInfo(tape.getTapeKey());
 		
+		if(info == null) {
+			resultMap.put("message", "존재하지 않는 테이프입니다.");
+			status = HttpStatus.NOT_FOUND;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
+		
 		if(jwtUtil.getRole(token) == 0 && !tape.getUser().getUserId().equals(info.getUser().getUserId())) {
 			resultMap.put("message", "사용자가 작성한 글이 아닙니다.");
 			status = HttpStatus.FORBIDDEN;
@@ -267,7 +273,7 @@ public class TapeController {
 		TapeDto info = service.tapeInfo(tapeKey);
 		
 		if(info == null) {
-			resultMap.put("message", "이미 삭제된 글입니다.");
+			resultMap.put("message", "존재하지 않는 테이프입니다.");
 			status = HttpStatus.NOT_FOUND;
 			return new ResponseEntity<Map<String, Object>>(resultMap, status);
 		}

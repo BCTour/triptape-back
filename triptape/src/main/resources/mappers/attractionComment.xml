@@ -46,10 +46,15 @@
 		where a.attraction_key=#{attractionKey}
 	</select>	
 	
+	<select id="commentInfo" resultMap="comment">
+		select * from attraction_comment where comment_key = #{commentKey}
+	</select>
+	
+	
 	<update id="modify">
 		update attraction_comment
 		set content = #{content}
-		where comment_key=#{commentKey}
+	  where comment_key=#{commentKey}
 	</update>
 	
 	<delete id="delete">

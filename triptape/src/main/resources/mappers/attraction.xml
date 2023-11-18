@@ -106,4 +106,6 @@
 		select count(*) from user_like_attraction
 		where user_id= #{userId} and attraction_key= #{attractionKey}
 	</select>
+
+	
 </mapper>

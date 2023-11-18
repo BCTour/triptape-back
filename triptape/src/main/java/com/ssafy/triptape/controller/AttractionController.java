@@ -154,7 +154,6 @@ public class AttractionController {
 		
 		AttractionDto info = service.info(attraction.getAttractionKey());
 		
-		
 		if(jwtUtil.getRole(token) == 0 && !attraction.getUserId().equals(info.getUserId())) {
 			resultMap.put("message", "사용자가 작성한 글이 아닙니다.");
 			status = HttpStatus.FORBIDDEN;

@@ -23,5 +23,5 @@ public interface TapeRepo {
 	
 	void updateView(int tapeKey);
 	void updateJoin(int tapeKey);
-	
+	List<TapeDto> attractionTape(int attractionKey);
 }

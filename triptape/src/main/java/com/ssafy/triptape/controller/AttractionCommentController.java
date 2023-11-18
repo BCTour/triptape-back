@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +29,7 @@ import com.ssafy.triptape.attraction.AttractionDto;
 import com.ssafy.triptape.attraction.SearchCondition;
 import com.ssafy.triptape.attraction.service.AttractionCommentService;
 import com.ssafy.triptape.attraction.service.AttractionService;
+import com.ssafy.triptape.common.util.JWTUtil;
 import com.ssafy.triptape.user.UserDto;
 import com.ssafy.triptape.user.service.UserService;
 
@@ -40,18 +43,39 @@ import io.swagger.annotations.ApiParam;
 @Api(tags="관광지 코멘트 관리 API")
 public class AttractionCommentController {
 
+	@Autowired
+	JWTUtil jwtUtil;
 	
 	@Autowired
 	private AttractionCommentService service;
 	
 	@PostMapping(value ="/regist") 
 	@ApiOperation("관광지 코멘트를 등록합니다.")
-	public ResponseEntity<?> regist(@RequestBody AttractionComment comment) {		
+	public ResponseEntity<?> regist(
+			@RequestBody AttractionComment comment,
+			HttpServletRequest request){
+		
+		Map<String, Object> resultMap = new HashMap<>();
+		HttpStatus status = HttpStatus.ACCEPTED;
+		
+		String token = request.getHeader("Authorization");
+		
+		if(!jwtUtil.checkToken(token)) {
+			resultMap.put("message", "사용불가능한 토큰입니다.");
+			status = HttpStatus.UNAUTHORIZED;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
+
+		if(!jwtUtil.getUserId(token).equals(comment.getUser().getUserId())) {
+			resultMap.put("message", "사용자 정보가 일치하지 않습니다.");
+			status = HttpStatus.FORBIDDEN;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}	
 		
 		try {
 			int result = service.regist(comment);
 			if(result==1) return new ResponseEntity<Void>(HttpStatus.CREATED);
-			else return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
+			else return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
 		} catch(Exception e) {
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -88,30 +112,91 @@ public class AttractionCommentController {
 	}
 
 	
-	@PutMapping("/modify/{commentKey}")
+	@PutMapping("/modify")
 	@ApiOperation("코멘트를 수정합니다.")
-	public ResponseEntity<?> modify(@PathVariable int commentKey,@RequestBody AttractionComment comment ){
-
-		comment.setCommentKey(commentKey);
+	public ResponseEntity<?> modify(
+			@RequestBody AttractionComment comment,
+			HttpServletRequest request){
 		
+		Map<String, Object> resultMap = new HashMap<>();
+		HttpStatus status = HttpStatus.ACCEPTED;
+
+		String token = request.getHeader("Authorization");
+		
+		if(!jwtUtil.checkToken(token)) {
+			resultMap.put("message", "사용불가능한 토큰입니다.");
+			status = HttpStatus.UNAUTHORIZED;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
+
+		if(!jwtUtil.getUserId(token).equals(comment.getUser().getUserId())) {
+			resultMap.put("message", "사용자 정보가 일치하지 않습니다.");
+			status = HttpStatus.FORBIDDEN;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}	
+
+		AttractionComment info = service.commentInfo(comment.getCommentKey());
+
+		if(jwtUtil.getRole(token) == 0 && !comment.getUser().getUserId().equals(info.getUser().getUserId())) {
+			resultMap.put("message", "사용자가 작성한 글이 아닙니다.");
+			status = HttpStatus.FORBIDDEN;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
+
 		try {
 			int result = service.modify(comment);
-			if(result==1) return new ResponseEntity<Void>(HttpStatus.OK);
-			else return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
+			if(result==1) {
+				resultMap.put("comment", service.commentInfo(comment.getCommentKey()));
+				status = HttpStatus.OK;
+				return new ResponseEntity<Void>(HttpStatus.OK);
+			}
+			else {
+				resultMap.put("message", "수정한 내용이 없습니다.");
+				status = HttpStatus.NO_CONTENT;
+			}
 		} catch(Exception e) {
-			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+			resultMap.put("message", e.getMessage());
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
 		}
-	
+		return new ResponseEntity<Map<String, Object>>(resultMap, status);
 	}
 	
-	@DeleteMapping("/delete/{commentKey}")
+	@DeleteMapping("/delete/{commentKey}/{userId}")
 	@ApiOperation("코멘트 정보를 삭제합니다.")
-	public ResponseEntity<?> delete(@PathVariable int commentKey){
+	public ResponseEntity<?> delete(
+			@PathVariable int commentKey,
+			@PathVariable String userId,
+			HttpServletRequest request){
+		
+		Map<String, Object> resultMap = new HashMap<>();
+		HttpStatus status = HttpStatus.ACCEPTED;
+
+		String token = request.getHeader("Authorization");
+		
+		if(!jwtUtil.checkToken(token)) {
+			resultMap.put("message", "사용불가능한 토큰입니다.");
+			status = HttpStatus.UNAUTHORIZED;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
+
+		if(!jwtUtil.getUserId(token).equals(userId)) {
+			resultMap.put("message", "사용자 정보가 일치하지 않습니다.");
+			status = HttpStatus.FORBIDDEN;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}	
+
+		AttractionComment info = service.commentInfo(commentKey);
+
+		if(jwtUtil.getRole(token) == 0 && !userId.equals(info.getUser().getUserId())) {
+			resultMap.put("message", "사용자가 작성한 글이 아닙니다.");
+			status = HttpStatus.FORBIDDEN;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
 		
 		try {
 			int result = service.delete(commentKey);
 			if(result==1) return new ResponseEntity<Void>(HttpStatus.OK);
-			else return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
+			else return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
 		} catch(Exception e) {
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}

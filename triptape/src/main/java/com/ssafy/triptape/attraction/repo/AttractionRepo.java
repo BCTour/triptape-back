@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 import com.ssafy.triptape.attraction.AttractionDto;
 import com.ssafy.triptape.attraction.AttractionTypeDto;
 import com.ssafy.triptape.attraction.SearchCondition;
+import com.ssafy.triptape.tape.TapeDto;
 
 /**
  * 관광지에 대한 mapper interface 입니다.
@@ -27,4 +28,6 @@ public interface AttractionRepo {
 	int dislikeAttraction(int attractionKey, String userId);
 	
 	boolean isLikeAttraction(int attractionKey, String userId);
+
+	
 }

@@ -46,8 +46,12 @@ public class AttractionCommentServiceImpl implements AttractionCommentService {
 	@Override
 	@Transactional
 	public int delete(int commmentKey) {
-		// TODO Auto-generated method stub
 		return repo.delete(commmentKey);
+	}
+
+	@Override
+	public AttractionComment commentInfo(int commentKey) {
+		return repo.commentInfo(commentKey);
 	}
 	
 

@@ -15,4 +15,6 @@ public interface AttractionCommentService {
 	
 	int modify(AttractionComment comment);
 	int delete(int commmentKey);
+	
+	AttractionComment commentInfo(int commentKey);
 }

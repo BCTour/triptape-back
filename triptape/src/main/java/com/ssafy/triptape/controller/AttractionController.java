@@ -203,6 +203,12 @@ public class AttractionController {
 		
 		AttractionDto info = service.info(attractionKey);
 		
+		if(info == null) {
+			resultMap.put("message", "이미 삭제된 글입니다.");
+			status = HttpStatus.NOT_FOUND;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
+		
 		
 		if(jwtUtil.getRole(token) == 0 && !userId.equals(info.getUserId())) {
 			resultMap.put("message", "사용자가 작성한 글이 아닙니다.");
@@ -254,7 +260,7 @@ public class AttractionController {
 			}
 			
 			int result = service.likeAttraction(attractionKey, userId);
-			if(result == 1) return new ResponseEntity<Void>(HttpStatus.OK);
+			if(result == 1) return new ResponseEntity<Void>(HttpStatus.CREATED);
 			else {
 				resultMap.put("message","내용이 없습니다.");
 				return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.NO_CONTENT);

@@ -187,12 +187,18 @@ public class AttractionCommentController {
 
 		AttractionComment info = service.commentInfo(commentKey);
 
+		if(info == null) {
+			resultMap.put("message", "이미 삭제된 글입니다.");
+			status = HttpStatus.NOT_FOUND;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
+		
 		if(jwtUtil.getRole(token) == 0 && !userId.equals(info.getUser().getUserId())) {
 			resultMap.put("message", "사용자가 작성한 글이 아닙니다.");
 			status = HttpStatus.FORBIDDEN;
 			return new ResponseEntity<Map<String, Object>>(resultMap, status);
 		}
-		
+
 		try {
 			int result = service.delete(commentKey);
 			if(result==1) return new ResponseEntity<Void>(HttpStatus.OK);

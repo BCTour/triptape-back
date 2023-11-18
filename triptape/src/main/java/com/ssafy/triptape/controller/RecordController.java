@@ -157,7 +157,7 @@ public class RecordController {
 	}
 	
 	@DeleteMapping("/delete/{recordKey}")
-	@ApiOperation("특정 테이프를 삭제합니다.")
+	@ApiOperation("특정 레코드를 삭제합니다.")
 	public ResponseEntity<?> deleteRecord(@PathVariable int recordKey){
 		
 		HttpStatus status = HttpStatus.ACCEPTED;
@@ -182,7 +182,7 @@ public class RecordController {
 	}
 	
 	@PostMapping("/like")
-	@ApiOperation("특정 테이프를 관심 리스트에 추가합니다.")
+	@ApiOperation("특정 레코드를 관심 리스트에 추가합니다.")
 	public ResponseEntity<?> likeRecord(@RequestParam int recordKey, @RequestParam String userId){
 		
 		HttpStatus status = HttpStatus.ACCEPTED;
@@ -197,7 +197,7 @@ public class RecordController {
 		}
 	}
 	@DeleteMapping("/dislike")
-	@ApiOperation("특정 테이프를 관심 리스트에 삭제합니다.")
+	@ApiOperation("특정 레코드를 관심 리스트에 삭제합니다.")
 	public ResponseEntity<?> dislikeRecord(@RequestParam int recordKey, @RequestParam String userId){
 		
 		HttpStatus status = HttpStatus.ACCEPTED;

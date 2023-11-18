@@ -10,7 +10,7 @@ import com.ssafy.triptape.tape.TapeDto;
 
 public interface TapeService {
 	
-	void registTape(TapeDto tape, MultipartFile file) throws IOException;
+	int registTape(TapeDto tape, MultipartFile file) throws IOException;
 	List<TapeDto> searchTopRecent(int N);
 	List<TapeDto> searchTopPopular(int N);
 	List<TapeDto> searchByCondition(String keyword, String word, int start, int countPerPage);
@@ -19,10 +19,12 @@ public interface TapeService {
 	int deleteTape(int tapeKey);
 	int updateTape(TapeDto tape, MultipartFile file) throws IOException ;
 	
-	void updateView(int tapeKey);
-	void updateJoin(int tapeKey);
+	int updateView(int tapeKey);
+	int updateJoin(int tapeKey);
 	
-	void likeTape(int tapeKey, String userId);
-	void dislikeTape(int tapeKey, String userId);
-	
+	int likeTape(int tapeKey, String userId);
+	int dislikeTape(int tapeKey, String userId);
+	boolean isLikeTape(int tapeKey, String userId);
+
+	List<TapeDto> attractionTape(int attractionKey);
 }

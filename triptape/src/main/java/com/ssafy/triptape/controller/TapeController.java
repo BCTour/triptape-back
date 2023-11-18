@@ -1,8 +1,11 @@
 package com.ssafy.triptape.controller;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,6 +23,8 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ssafy.triptape.attraction.AttractionDto;
+import com.ssafy.triptape.common.util.JWTUtil;
 import com.ssafy.triptape.tape.TapeDto;
 import com.ssafy.triptape.tape.service.TapeService;
 
@@ -33,15 +38,39 @@ import io.swagger.annotations.ApiOperation;
 public class TapeController {
 
 	@Autowired
+	private JWTUtil jwtUtil;
+	
+	@Autowired
 	private TapeService service;
 	
 	@PostMapping(value="/regist", consumes="multipart/form-data")
 	@ApiOperation(value="테이프를 등록합니다.")
-	public ResponseEntity<?> registTape(@RequestPart(value="tape") TapeDto tape, @RequestPart(value="file", required = false) MultipartFile file) {
+	public ResponseEntity<?> registTape(
+			@RequestPart(value="tape") TapeDto tape, 
+			@RequestPart(value="file", required = false) MultipartFile file,
+			HttpServletRequest request){
+		
+		Map<String, Object> resultMap = new HashMap<>();
+		HttpStatus status = HttpStatus.ACCEPTED;
+		
+		String token = request.getHeader("Authorization");
+		
+		if(!jwtUtil.checkToken(token)) {
+			resultMap.put("message", "사용불가능한 토큰입니다.");
+			status = HttpStatus.UNAUTHORIZED;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
+
+		if(!jwtUtil.getUserId(token).equals(tape.getUser().getUserId())) {
+			resultMap.put("message", "사용자 정보가 일치하지 않습니다.");
+			status = HttpStatus.FORBIDDEN;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
 		
 		try {
-			service.registTape(tape, file);
-			return new ResponseEntity<Void>(HttpStatus.CREATED);
+			int result = service.registTape(tape, file);
+			if(result == 1) return new ResponseEntity<Void>(HttpStatus.CREATED);
+			else return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
 		} catch(Exception e) {
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -99,7 +128,8 @@ public class TapeController {
 	
 	@GetMapping("/search")
 	@ApiOperation("조건에 따른 테이프 목록을 조회합니다.")
-	public ResponseEntity<?> searchByCondition(@RequestParam(required=false)String keyword,@RequestParam(required=false)String word, @RequestParam int currentPage){
+	public ResponseEntity<?> searchByCondition(
+			@RequestParam(required=false)String keyword,@RequestParam(required=false)String word, @RequestParam int currentPage){
 		
 		Map<String, Object> resultMap = new HashMap<>();
 		HttpStatus status = HttpStatus.ACCEPTED;
@@ -133,7 +163,9 @@ public class TapeController {
 	
 	@GetMapping("/search/info/{tapeKey}")
 	@ApiOperation("특정 테이프 정보를 조회합니다.")
-	public ResponseEntity<?> searchInfo(@PathVariable int tapeKey){
+	public ResponseEntity<?> searchInfo(
+			@PathVariable int tapeKey,
+			HttpServletRequest request){
 		
 		Map<String, Object> resultMap = new HashMap<>();
 		HttpStatus status = HttpStatus.ACCEPTED;
@@ -148,7 +180,6 @@ public class TapeController {
 				resultMap.put("message", message);
 			} else {
 				resultMap.put("tape", tape);
-				service.updateView(tapeKey);	
 				status = HttpStatus.OK;
 			}
 		} catch(Exception e) {
@@ -161,12 +192,36 @@ public class TapeController {
 	
 	@PutMapping(value="/modify", consumes="multipart/form-data")
 	@ApiOperation(value="특정 테이프를 수정합니다.")
-	public ResponseEntity<?> modifyTape(@RequestPart(value="tape") TapeDto tape, @RequestPart(value="file", required = false) MultipartFile file){
+	public ResponseEntity<?> modifyTape(
+			@RequestPart(value="tape") TapeDto tape, 
+			@RequestPart(value="file", required = false) MultipartFile file,
+			HttpServletRequest request){
 		
-		Map<String, Object> resultMap = new HashMap<>();
 		HttpStatus status = HttpStatus.ACCEPTED;
+		Map<String, Object> resultMap = new HashMap<>();
+		String token = request.getHeader("Authorization");
 		String message;
-
+		
+		if(!jwtUtil.checkToken(token)) {
+			resultMap.put("message", "사용불가능한 토큰입니다.");
+			status = HttpStatus.UNAUTHORIZED;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
+		
+		if(!jwtUtil.getUserId(token).equals(tape.getUser().getUserId())) {
+			resultMap.put("message", "사용자 정보가 일치하지 않습니다.");
+			status = HttpStatus.FORBIDDEN;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
+		
+		TapeDto info = service.tapeInfo(tape.getTapeKey());
+		
+		if(jwtUtil.getRole(token) == 0 && !tape.getUser().getUserId().equals(info.getUser().getUserId())) {
+			resultMap.put("message", "사용자가 작성한 글이 아닙니다.");
+			status = HttpStatus.FORBIDDEN;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
+		
 		try {
 			int result = service.updateTape(tape, file);
 			if(result == 1) {
@@ -185,50 +240,163 @@ public class TapeController {
 		return new ResponseEntity<Map<String, Object>>(resultMap, status);
 	}
 	
-	@DeleteMapping("/delete/{tapeKey}")
+	@DeleteMapping("/delete/{tapeKey}/{userId}")
 	@ApiOperation("특정 테이프를 삭제합니다.")
-	public ResponseEntity<?> deleteTape(@PathVariable int tapeKey){
+	public ResponseEntity<?> deleteTape(
+			@PathVariable int tapeKey,
+			@PathVariable String userId,
+			HttpServletRequest request){
 		
 		HttpStatus status = HttpStatus.ACCEPTED;
+		Map<String, Object> resultMap = new HashMap<>();
+		String token = request.getHeader("Authorization");
+		
+		if(!jwtUtil.checkToken(token)) {
+			resultMap.put("message", "사용불가능한 토큰입니다.");
+			status = HttpStatus.UNAUTHORIZED;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
+		
+		if(!jwtUtil.getUserId(token).equals(userId)) {
+			resultMap.put("message", "사용자 정보가 일치하지 않습니다.");
+			status = HttpStatus.FORBIDDEN;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
+		
+
+		TapeDto info = service.tapeInfo(tapeKey);
+		
+		if(info == null) {
+			resultMap.put("message", "이미 삭제된 글입니다.");
+			status = HttpStatus.NOT_FOUND;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
+		
+		if(jwtUtil.getRole(token) == 0 && !userId.equals(info.getUser().getUserId())) {
+			resultMap.put("message", "사용자가 작성한 글이 아닙니다.");
+			status = HttpStatus.FORBIDDEN;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
+		
+		try {
+			int result = service.deleteTape(tapeKey);
+			if(result == 1 ) {
+				status = HttpStatus.OK;
+				return new ResponseEntity<>(status);
+			} else {
+				resultMap.put("message","삭제할 내용이 없습니다.");
+				status = HttpStatus.NO_CONTENT;
+			}
+		} catch(Exception e) {
+			resultMap.put("message", e.getMessage());
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
+		}
+		
+		return new ResponseEntity<Map<String, Object>>(resultMap, status);
+	}
+	
+	@PostMapping("/like/{tapeKey}/{userId}")
+	@ApiOperation("특정 테이프를 관심 리스트에 추가합니다.")
+	public ResponseEntity<?> likeTape(
+			@PathVariable int tapeKey, 
+			@PathVariable String userId,
+			HttpServletRequest request) {
+		
+		Map<String, Object> resultMap = new HashMap<>();
+		HttpStatus status = HttpStatus.ACCEPTED;
+		
+		String token = request.getHeader("Authorization");
+		
+		if(!jwtUtil.checkToken(token)) {
+			resultMap.put("message", "사용불가능한 토큰입니다.");
+			status = HttpStatus.UNAUTHORIZED;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
+
+		if(!jwtUtil.getUserId(token).equals(userId)) {
+			resultMap.put("message", "사용자 정보가 일치하지 않습니다.");
+			status = HttpStatus.FORBIDDEN;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
 
 		try {
-			service.deleteTape(tapeKey);
-			status = HttpStatus.OK;
-			return new ResponseEntity<>(status);
+			if(service.isLikeTape(tapeKey, userId)) {
+				resultMap.put("message", "이미 좋아요를 하였습니다.");
+				return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.CONFLICT);
+			}
+			
+			int result = service.likeTape(tapeKey, userId);
+			if(result == 1) return new ResponseEntity<Void>(HttpStatus.CREATED);
+			else {
+				resultMap.put("message", "등록한 내용이 없습니다.");
+				return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.NO_CONTENT);
+			}
 		} catch(Exception e) {
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
 			return new ResponseEntity<String>(e.getMessage(), status);
+		}
+	}
+	@DeleteMapping("/dislike/{tapeKey}/{userId}")
+	@ApiOperation("특정 테이프를 관심 리스트에 삭제합니다.")
+	public ResponseEntity<?> dislikeTape(
+			@PathVariable int tapeKey, 
+			@PathVariable String userId,
+			HttpServletRequest request) {
+		
+		Map<String, Object> resultMap = new HashMap<>();
+		HttpStatus status = HttpStatus.ACCEPTED;
+		
+		String token = request.getHeader("Authorization");
+		
+		if(!jwtUtil.checkToken(token)) {
+			resultMap.put("message", "사용불가능한 토큰입니다.");
+			status = HttpStatus.UNAUTHORIZED;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
+
+		if(!jwtUtil.getUserId(token).equals(userId)) {
+			resultMap.put("message", "사용자 정보가 일치하지 않습니다.");
+			status = HttpStatus.FORBIDDEN;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
+
+		try {
+			int result = service.dislikeTape(tapeKey, userId);
+			if(result == 1) return new ResponseEntity<Void>(HttpStatus.OK);
+			else {
+				resultMap.put("message","이미 좋아요가 취소되었습니다.");
+				return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.NO_CONTENT);
+			}
+		} catch(Exception e) {
+			resultMap.put("message",e.getMessage());
+			return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 	
-	@PostMapping("/like")
-	@ApiOperation("특정 테이프를 관심 리스트에 추가합니다.")
-	public ResponseEntity<?> likeTape(@RequestParam int tapeKey, @RequestParam String userId){
+	@GetMapping("/include/attraction")
+	@ApiOperation("특정 장소가 포함된 테이프 조회")	
+	public ResponseEntity<?> tapeIncludeAttraction(@RequestParam int attractionKey) {
 		
 		HttpStatus status = HttpStatus.ACCEPTED;
-
-		try {
-			service.likeTape(tapeKey, userId);
-			status = HttpStatus.CREATED;
-			return new ResponseEntity<>(status);
-		} catch(Exception e) {
-			status = HttpStatus.INTERNAL_SERVER_ERROR;
-			return new ResponseEntity<String>(e.getMessage(), status);
-		}
-	}
-	@DeleteMapping("/dislike")
-	@ApiOperation("특정 테이프를 관심 리스트에 삭제합니다.")
-	public ResponseEntity<?> dislikeTape(@RequestParam int tapeKey, @RequestParam String userId){
+		Map<String, Object> resultMap = new HashMap<>();
 		
-		HttpStatus status = HttpStatus.ACCEPTED;
-
 		try {
-			service.dislikeTape(tapeKey, userId);
-			status = HttpStatus.OK;
-			return new ResponseEntity<>(status);
+			List<TapeDto> tape = service.attractionTape(attractionKey);
+		
+			if(tape != null && !tape.isEmpty()) {
+				resultMap.put("tape", tape);
+				status = HttpStatus.OK;
+			} else {
+				resultMap.put("message", "조회할 내용이 없습니다.");
+				status= HttpStatus.NO_CONTENT;
+			}
+			
 		} catch(Exception e) {
+			resultMap.put("message", e.getMessage());
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
-			return new ResponseEntity<String>(e.getMessage(), status);
 		}
+		
+		return new ResponseEntity<Map<String,Object>>(resultMap, status);
+		
 	}
 }

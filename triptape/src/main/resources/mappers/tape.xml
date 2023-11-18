@@ -117,4 +117,19 @@
 		delete from user_like_tape where user_id=#{userId} and tape_key=#{tapeKey}
 	</delete>
 
+	<select id="isLikeTape" resultType="boolean">
+		select count(*) from user_like_tape
+		where user_id= #{userId} and tape_key= #{tapeKey}
+	</select>
+	
+	<select id="attractionTape" resultMap="tape">
+		select * 
+		  from tape a join ( select distinct b.tape_key, b.attraction_key
+					   		   from record b 
+					           join attraction_info c on b.attraction_key = c.attraction_key) d on a.tape_key = d.tape_key
+		  left outer join user e on a.user_id = e.user_id
+		  left outer join (<include refid="countPopular" />) f on a.tape_key = f.tape_key
+	     where d.attraction_key = #{attractionKey}	
+	</select>
+
 </mapper>

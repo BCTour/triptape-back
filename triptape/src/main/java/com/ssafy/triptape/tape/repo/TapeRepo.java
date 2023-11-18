@@ -9,7 +9,7 @@ import com.ssafy.triptape.tape.TapeDto;
 @Mapper
 public interface TapeRepo {
 	
-	void registTape(TapeDto tape);
+	int registTape(TapeDto tape);
 	List<TapeDto> searchTopRecent(int N);
 	List<TapeDto> searchTopPopular(int N);
 	List<TapeDto> searchByCondition(String keyword, String word, int start, int countPerPage);
@@ -18,10 +18,13 @@ public interface TapeRepo {
 	int deleteTape(int tapeKey);
 	int updateTape(TapeDto tape);
 	
-	void likeTape(int tapeKey, String userId);
-	void dislikeTape(int tapeKey, String userId);
+	int likeTape(int tapeKey, String userId);
+	int dislikeTape(int tapeKey, String userId);
+	boolean isLikeTape(int tapeKey, String userId);
 	
-	void updateView(int tapeKey);
-	void updateJoin(int tapeKey);
+	
+	int updateView(int tapeKey);
+	int updateJoin(int tapeKey);
 	List<TapeDto> attractionTape(int attractionKey);
+	
 }

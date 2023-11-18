@@ -62,7 +62,6 @@ public class ImgController {
 		Base64.Encoder encoder = Base64.getEncoder();
         byte[] photoEncode = encoder.encode(saveFile.getBytes());
         String photoImg = new String(photoEncode, "UTF8");
-		
         
         return new ResponseEntity<String>(photoImg, HttpStatus.OK);
 

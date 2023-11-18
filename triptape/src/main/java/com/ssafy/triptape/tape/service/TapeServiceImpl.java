@@ -44,9 +44,9 @@ public class TapeServiceImpl implements TapeService {
 	
 	@Override
 	@Transactional
-	public void registTape(TapeDto tape, MultipartFile file) throws IOException{
+	public int registTape(TapeDto tape, MultipartFile file) throws IOException{
 		fileHandling(tape, file);
-		repo.registTape(tape);
+		return repo.registTape(tape);
 	}
 
 	@Override
@@ -62,15 +62,15 @@ public class TapeServiceImpl implements TapeService {
 
 	@Override
 	@Transactional
-	public void updateView(int tapeKey) {
-		repo.updateView(tapeKey);
+	public int updateView(int tapeKey) {
+		return repo.updateView(tapeKey);
 	}
 
 
 	@Override
 	@Transactional
-	public void updateJoin(int tapeKey) {
-		repo.updateJoin(tapeKey);
+	public int updateJoin(int tapeKey) {
+		return repo.updateJoin(tapeKey);
 	}
 
 
@@ -87,14 +87,14 @@ public class TapeServiceImpl implements TapeService {
 
 
 	@Override
-	public void likeTape(int tapeKey, String userId) {
-		repo.likeTape(tapeKey, userId);
+	public int likeTape(int tapeKey, String userId) {
+		return repo.likeTape(tapeKey, userId);
 	}
 
 
 	@Override
-	public void dislikeTape(int tapeKey, String userId) {
-		repo.dislikeTape(tapeKey, userId);
+	public int dislikeTape(int tapeKey, String userId) {
+		return repo.dislikeTape(tapeKey, userId);
 	}
 
 
@@ -116,6 +116,18 @@ public class TapeServiceImpl implements TapeService {
 	public int updateTape(TapeDto tape, MultipartFile file) throws IOException {
 		fileHandling(tape, file);
 		return repo.updateTape(tape);
+	}
+
+
+	@Override
+	public boolean isLikeTape(int tapeKey, String userId) {
+		return repo.isLikeTape(tapeKey, userId);
+	}
+
+
+	@Override
+	public List<TapeDto> attractionTape(int attractionKey) {
+		return repo.attractionTape(attractionKey);
 	}
 
 }

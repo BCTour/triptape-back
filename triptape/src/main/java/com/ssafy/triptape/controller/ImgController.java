@@ -1,6 +1,10 @@
 package com.ssafy.triptape.controller;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -57,13 +62,18 @@ public class ImgController {
 		String saveFolder = "classpath:static/resources/upload";
 		Resource res = resLoader.getResource(saveFolder);
 
-		String saveFile = res.getFile().getCanonicalPath() + "/" +imgName;
+		Path savePath = Paths.get(res.getFile().getCanonicalPath(), imgName);
+	    byte[] fileContent = Files.readAllBytes(savePath);
+	    System.out.println(fileContent);
 		
-		Base64.Encoder encoder = Base64.getEncoder();
-        byte[] photoEncode = encoder.encode(saveFile.getBytes());
-        String photoImg = new String(photoEncode, "UTF8");
-        
-        return new ResponseEntity<String>(photoImg, HttpStatus.OK);
+	    Base64.Encoder encoder = Base64.getEncoder();
+	    byte[] photoEncode = encoder.encode(fileContent);
+
+	    HttpHeaders headers = new HttpHeaders();
+	    headers.setContentType(MediaType.IMAGE_PNG);
+	    System.out.println("Encoded Image: " + new String(photoEncode));
+
+        return new ResponseEntity<>(photoEncode,headers, HttpStatus.OK);
 
 	}
 }

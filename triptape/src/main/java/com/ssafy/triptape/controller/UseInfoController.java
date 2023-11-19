@@ -123,6 +123,53 @@ public class UseInfoController {
 		return new ResponseEntity<Map<String, Object>>(resultMap, status);
 	}
 	
+	@GetMapping("/search/report")
+	@ApiOperation("신고횟수 많은 장소 조회")
+	public ResponseEntity<?> searchReportAttraction(
+			@RequestParam String userId,
+			@RequestParam int countReport,
+			HttpServletRequest request){
+		
+		Map<String, Object> resultMap = new HashMap<>();
+		HttpStatus status = HttpStatus.ACCEPTED;
+		
+		String token = request.getHeader("Authorization");
+		
+		if(!jwtUtil.checkToken(token)) {
+			resultMap.put("message", "사용불가능한 토큰입니다.");
+			status = HttpStatus.UNAUTHORIZED;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status); 
+		}
+		
+		if(jwtUtil.getRole(token) != 1) {
+			resultMap.put("message", "권한이 없습니다.");
+			status = HttpStatus.FORBIDDEN;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
+		
+
+		if(!jwtUtil.getUserId(token).equals(userId)) {
+			resultMap.put("message", "사용자 정보가 일치하지 않습니다.");
+			status = HttpStatus.FORBIDDEN;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
+		
+		try {
+			List<AttractionDto> attraction = service.searchReportAttraction(countReport);
+			if(attraction != null && !attraction.isEmpty()) {
+				resultMap.put("attraction", attraction);
+				status = HttpStatus.OK;
+			} else {
+				resultMap.put("message", "조회할 내용이 없습니다.");
+				status = HttpStatus.NO_CONTENT;
+			}
+		} catch(Exception e) {
+			resultMap.put("message", e.getMessage());
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
+		}
+		return new ResponseEntity<Map<String, Object>>(resultMap, status);
+	}
+	
 	@GetMapping("/like/tape")
 	@ApiOperation("사용자가 관심있는 테이프 조회")
 	public ResponseEntity<?> userLikeTape(

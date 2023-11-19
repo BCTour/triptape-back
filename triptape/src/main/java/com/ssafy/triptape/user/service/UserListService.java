@@ -12,4 +12,5 @@ public interface UserListService {
 	List<RecordDto> userLikeRecord(String userId);
 	List<AttractionDto> userLikeAttraction(String userId);
 	int userReportAttraction(String userId, int attarctionKey);
+	List<AttractionDto> searchReportAttraction(int reportCount);
 }

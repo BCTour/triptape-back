@@ -42,4 +42,6 @@ public class AttractionDto {
 
 	@ApiModelProperty(value="좋아요")
 	private int popular;
+	@ApiModelProperty(value="신고수")
+	private int report;
 }

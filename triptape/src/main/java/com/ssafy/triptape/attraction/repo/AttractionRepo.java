@@ -32,4 +32,6 @@ public interface AttractionRepo {
 	int userReportAttraction(String userId, int attractionKey);
 	
 	List<AttractionDto> popularAttraction(int n);
+	
+	List<AttractionDto> searchReportAttraction(int reportCount);
 }

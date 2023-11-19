@@ -50,4 +50,9 @@ public class UserListServiceImpl implements UserListService {
 		return attractionRepo.userReportAttraction(userId, attarctionKey);
 	}
 
+	@Override
+	public List<AttractionDto> searchReportAttraction(int reportCount) {
+		return attractionRepo.searchReportAttraction(reportCount);
+	}
+
 }

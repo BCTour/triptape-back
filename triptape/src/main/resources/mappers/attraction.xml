@@ -9,6 +9,7 @@
 		<result column="longitude" property="longitude"/>
 		<result column="description" property="description"/>
 		<result column="user_id" property="userId"/>
+		<result column="popular" property="popular"/>
 		<association property="attractionType" javaType="com.ssafy.triptape.attraction.AttractionTypeDto">
 			<result column="type_code" property="typeCode" />
 			<result column="type_name" property="typeName" />
@@ -112,5 +113,15 @@
 	<insert id="userReportAttraction">
 		insert into user_report_attraction values(#{userId}, #{attractionKey});
 	</insert>
+	
+	<select id="popularAttraction" resultMap="attraction">
+		select * 
+		  from attraction_info a
+		  join (select attraction_key, count(*) 'popular'
+		   		  from user_like_attraction
+		  		 group by attraction_key) b on a.attraction_key = b.attraction_key
+		 order by b.popular desc
+		 limit ${n}
+	</select>
 	
 </mapper>

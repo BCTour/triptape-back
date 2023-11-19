@@ -110,6 +110,28 @@ public class AttractionController {
 		return new ResponseEntity<Map<String, Object>>(result, status);
 	}
 	
+	@GetMapping("/popular/{n}") 
+	@ApiOperation("인기있는 관광지 상위 n개를 반환합니다.")
+	public ResponseEntity<?> popularAttraction(@PathVariable int n){
+		Map<String, Object> result = new HashMap<>();
+		HttpStatus status = HttpStatus.ACCEPTED;
+		
+		try {
+			List<AttractionDto> list = service.popularAttraction(n);
+			if(list != null) {
+				result.put("attraction", list);
+				status = HttpStatus.OK;
+			} else {
+				result.put("message", "반환할 데이터가 없습니다.");
+				status = HttpStatus.NO_CONTENT;
+			}
+		} catch(Exception e) {
+			result.put("message", e.getMessage());
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
+		}
+		return new ResponseEntity<Map<String, Object>>(result, status);
+	}
+	
 	
 	@GetMapping("/info/{attractionKey}")
 	@ApiOperation("관광지 상세 정보를 반환합니다.")

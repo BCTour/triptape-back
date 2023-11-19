@@ -21,4 +21,6 @@ public interface AttractionService {
 	
 	int likeAttraction(int attractionKey, String userId);
 	int dislikeAttraction(int attractionKey, String userId);
+	
+	List<AttractionDto> popularAttraction(int n);
 }

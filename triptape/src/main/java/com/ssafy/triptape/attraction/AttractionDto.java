@@ -40,4 +40,6 @@ public class AttractionDto {
 	@ApiModelProperty(value ="사용자 아이디")
 	private String userId;
 
+	@ApiModelProperty(value="좋아요")
+	private int popular;
 }

@@ -92,5 +92,10 @@ public class AttractionServiceImpl implements AttractionService {
 		return repo.dislikeAttraction(attractionKey, userId);
 	}
 
+	@Override
+	public List<AttractionDto> popularAttraction(int n) {
+		return repo.popularAttraction(n);
+	}
+
 
 }

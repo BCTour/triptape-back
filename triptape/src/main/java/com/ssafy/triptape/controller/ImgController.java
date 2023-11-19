@@ -14,6 +14,7 @@ import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.dao.DuplicateKeyException;
@@ -57,31 +58,24 @@ public class ImgController {
 	ResourceLoader resLoader;
 	
 	@GetMapping(value ="/img/{imgName}")
-	@ApiOperation("이미지를 불러옵니다.")
-	public ResponseEntity<?> encodeImg(@PathVariable String imgName) throws IOException {		
-		String saveFolder = "classpath:static/resources/upload";
-		Resource res = resLoader.getResource(saveFolder);
-		
-		try {
-			Path savePath = Paths.get(res.getFile().getCanonicalPath(), imgName);
-			
-		    byte[] fileContent = Files.readAllBytes(savePath);
-			
-		    Base64.Encoder encoder = Base64.getEncoder();
-		    byte[] photoEncode = encoder.encode(fileContent);
-		    String contentType = "image/" + getImageFormat(imgName); 
-		    HttpHeaders headers = new HttpHeaders();
-	        headers.setContentType(MediaType.valueOf(contentType));
-	        
-//	        Base64.getEncoder().encodeToString(imageBytes);
-		    String base64Image = "data:" + contentType + ";base64," + new String(photoEncode);
-//		    System.out.println("Encoded Image: data:image/png;base64," + base64Image);
-		    return new ResponseEntity<String>(base64Image, HttpStatus.OK);
-		    
-		} catch(Exception e) {
-			return new ResponseEntity<String>("그런 파일은 없습니다.", HttpStatus.NO_CONTENT);
-		}
-	}
+    @ApiOperation("이미지를 불러옵니다.")
+    public ResponseEntity<?> encodeImg(@PathVariable String imgName) throws IOException {        
+        
+        try {
+            Resource resource = new ClassPathResource("static/resources/upload/" + imgName);
+            byte[] imageBytes = Files.readAllBytes(resource.getFile().toPath());
+            String imgFormat = getImageFormat(imgName);
+            if (imgFormat.equals("jpg") || imgFormat.equals("jpeg")) {
+                return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(imageBytes);                
+            } else if (imgFormat.equals("png")) {
+                return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(imageBytes);                                
+            } else {
+                return new ResponseEntity<String>("그런 파일은 없습니다.", HttpStatus.NO_CONTENT);                
+            }
+        } catch(Exception e) {
+            return new ResponseEntity<String>("그런 파일은 없습니다.", HttpStatus.NO_CONTENT);
+        }
+    }
 	
 	private String getImageFormat(String imageName) {
         // 이미지 확장자를 추출하여 반환

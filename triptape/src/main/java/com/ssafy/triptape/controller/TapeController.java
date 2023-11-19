@@ -1,6 +1,10 @@
 package com.ssafy.triptape.controller;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,8 +12,12 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -85,7 +93,10 @@ public class TapeController {
 		HttpStatus status = HttpStatus.ACCEPTED;
 		String message = "";
 		try {
+			
 			List<TapeDto> tapeList = service.searchTopRecent(n);
+			
+			
 			if(tapeList == null || tapeList.size() == 0) {
 				message = "조회할 데이터가 없습니다.";
 				status = HttpStatus.NO_CONTENT;
@@ -144,6 +155,7 @@ public class TapeController {
 		try {
 			List<TapeDto> tapeList = service.searchByCondition(keyword, word, start, countPerPage);
 			int totalCount = service.getTotalListCount(keyword, word);
+
 
 			if(tapeList == null || tapeList.size() == 0) {
 				message = "조회할 데이터가 없습니다.";

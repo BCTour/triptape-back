@@ -61,19 +61,34 @@ public class ImgController {
 	public ResponseEntity<?> encodeImg(@PathVariable String imgName) throws IOException {		
 		String saveFolder = "classpath:static/resources/upload";
 		Resource res = resLoader.getResource(saveFolder);
-
-		Path savePath = Paths.get(res.getFile().getCanonicalPath(), imgName);
-	    byte[] fileContent = Files.readAllBytes(savePath);
-	    System.out.println(fileContent);
 		
-	    Base64.Encoder encoder = Base64.getEncoder();
-	    byte[] photoEncode = encoder.encode(fileContent);
-
-	    HttpHeaders headers = new HttpHeaders();
-	    headers.setContentType(MediaType.IMAGE_PNG);
-	    System.out.println("Encoded Image: " + new String(photoEncode));
-
-        return new ResponseEntity<>(photoEncode,headers, HttpStatus.OK);
-
+		try {
+			Path savePath = Paths.get(res.getFile().getCanonicalPath(), imgName);
+			
+		    byte[] fileContent = Files.readAllBytes(savePath);
+			
+		    Base64.Encoder encoder = Base64.getEncoder();
+		    byte[] photoEncode = encoder.encode(fileContent);
+		    String contentType = "image/" + getImageFormat(imgName); 
+		    HttpHeaders headers = new HttpHeaders();
+	        headers.setContentType(MediaType.valueOf(contentType));
+	        
+//	        Base64.getEncoder().encodeToString(imageBytes);
+		    String base64Image = "data:" + contentType + ";base64," + new String(photoEncode);
+//		    System.out.println("Encoded Image: data:image/png;base64," + base64Image);
+		    return new ResponseEntity<String>(base64Image, HttpStatus.OK);
+		    
+		} catch(Exception e) {
+			return new ResponseEntity<String>("그런 파일은 없습니다.", HttpStatus.NO_CONTENT);
+		}
 	}
+	
+	private String getImageFormat(String imageName) {
+        // 이미지 확장자를 추출하여 반환
+        int lastDotIndex = imageName.lastIndexOf('.');
+        if (lastDotIndex > 0) {
+            return imageName.substring(lastDotIndex + 1);
+        }
+        return "png"; // 기본적으로 png로 설정
+    }
 }

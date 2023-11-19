@@ -116,11 +116,6 @@
 	<delete id="dislikeTape">
 		delete from user_like_tape where user_id=#{userId} and tape_key=#{tapeKey}
 	</delete>
-
-	<select id="isLikeTape" resultType="boolean">
-		select count(*) from user_like_tape
-		where user_id= #{userId} and tape_key= #{tapeKey}
-	</select>
 	
 	<select id="attractionTape" resultMap="tape">
 		select * 

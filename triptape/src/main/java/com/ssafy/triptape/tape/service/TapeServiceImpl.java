@@ -87,12 +87,14 @@ public class TapeServiceImpl implements TapeService {
 
 
 	@Override
+	@Transactional
 	public int likeTape(int tapeKey, String userId) {
 		return repo.likeTape(tapeKey, userId);
 	}
 
 
 	@Override
+	@Transactional
 	public int dislikeTape(int tapeKey, String userId) {
 		return repo.dislikeTape(tapeKey, userId);
 	}
@@ -116,12 +118,6 @@ public class TapeServiceImpl implements TapeService {
 	public int updateTape(TapeDto tape, MultipartFile file) throws IOException {
 		fileHandling(tape, file);
 		return repo.updateTape(tape);
-	}
-
-
-	@Override
-	public boolean isLikeTape(int tapeKey, String userId) {
-		return repo.isLikeTape(tapeKey, userId);
 	}
 
 

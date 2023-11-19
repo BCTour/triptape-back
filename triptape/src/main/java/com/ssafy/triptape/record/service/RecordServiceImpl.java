@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.triptape.attraction.AttractionDto;
@@ -40,6 +41,7 @@ public class RecordServiceImpl implements RecordService {
 	
 	
 	@Override
+	@Transactional
 	public int registRecord(RecordDto record, MultipartFile file) throws IllegalStateException, IOException {
 		fileHandling(record,file);
 		int recordKey = repo.countRecord(record.getTapeKey());
@@ -62,32 +64,29 @@ public class RecordServiceImpl implements RecordService {
 		return repo.recordInfo(tapeKey, recordKey);
 	}
 	@Override
+	@Transactional
 	public int deleteRecord(int tapeKey, int recordKey) {
 		return repo.deleteRecord(tapeKey, recordKey);
 	}
 
 	@Override
+	@Transactional
 	public int modifyRecord(RecordDto record, MultipartFile file) throws IllegalStateException, IOException {
 		fileHandling(record, file);
 		return repo.modifyRecord(record);
 	}
 
 	@Override
+	@Transactional
 	public int likeRecord(int tapeKey, int recordKey, String userId) {
 		return repo.likeRecord(tapeKey, recordKey, userId);
 	}
 
 	@Override
+	@Transactional
 	public int dislikeRecord(int tapeKey, int recordKey, String userId) {
 		return repo.dislikeRecord(tapeKey, recordKey, userId);
 	}
-
-
-	@Override
-	public boolean isLikeRecord(int tapeKey, int recordKey, String userId) {
-		return repo.isLikeRecord(tapeKey, recordKey, userId);
-	}
-
 	
 
 }

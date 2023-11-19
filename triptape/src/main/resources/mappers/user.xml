@@ -72,6 +72,8 @@
 		   set user_pw = #{userPw},
 		   	   salt = #{salt}
 		 where user_id=#{userId}
-	</update>	
+	</update>
+	
+	
 	
 </mapper>

@@ -101,11 +101,6 @@
 		delete from user_like_attraction 
 		where user_id= #{userId} and attraction_key= #{attractionKey}
 	</delete>
-	
-	<select id="isLikeAttraction" resultType="boolean">
-		select count(*) from user_like_attraction
-		where user_id= #{userId} and attraction_key= #{attractionKey}
-	</select>
 
 	<select id="userLikeAttraction" resultMap="attraction">
 		select a.*, c.* from attraction_info a

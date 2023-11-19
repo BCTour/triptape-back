@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -71,9 +72,13 @@ public class AttractionController {
 		try {
 			int result = service.regist(attraction, file);
 			if(result==1) return new ResponseEntity<Void>(HttpStatus.CREATED);
-			else return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
+			else {
+				resultMap.put("message", "조회할 정보가 없습니다.");
+				return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.NO_CONTENT);
+			}
 		} catch(Exception e) {
-			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+			resultMap.put("message", e.getMessage());
+			return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 	 
@@ -226,7 +231,7 @@ public class AttractionController {
 		try {
 			int result = service.delete(attractionKey);
 			if(result==1) return new ResponseEntity<Void>(HttpStatus.OK);
-			else return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
+			else return new ResponseEntity<String>("반환할 데이터가 없습니다.", HttpStatus.NO_CONTENT);
 		} catch(Exception e) {
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -259,19 +264,17 @@ public class AttractionController {
 		}
 		
 		try {
-
-			if(service.isLikeAttraction(attractionKey, userId)) {
-				resultMap.put("message", "이미 좋아요를 하였습니다.");
-				return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.CONFLICT);
-			}
-			
 			int result = service.likeAttraction(attractionKey, userId);
 			if(result == 1) return new ResponseEntity<Void>(HttpStatus.CREATED);
 			else {
 				resultMap.put("message","내용이 없습니다.");
 				return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.NO_CONTENT);
 			}
-		} catch(Exception e) {
+		} catch(DuplicateKeyException e) {
+			resultMap.put("message", "이미 좋아요를 하였습니다.");
+			return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.CONFLICT);
+		}
+		catch(Exception e) {
 			resultMap.put("message",e.getMessage());
 			return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.INTERNAL_SERVER_ERROR);
 		}

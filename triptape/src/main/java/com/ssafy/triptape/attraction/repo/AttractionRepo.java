@@ -28,7 +28,6 @@ public interface AttractionRepo {
 	int likeAttraction(int attractionKey, String userId);
 	int dislikeAttraction(int attractionKey, String userId);
 	
-	boolean isLikeAttraction(int attractionKey, String userId);
 	List<AttractionDto> userLikeAttraction(String userId);
 	int userReportAttraction(String userId, int attractionKey);
 }

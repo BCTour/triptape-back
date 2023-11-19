@@ -19,8 +19,6 @@ public interface RecordRepo {
 	int likeRecord(int tapeKey, int recordKey, String userId);
 	int dislikeRecord(int tapeKey, int recordKey, String userId);
 	
-	boolean isLikeRecord(int tapeKey, int recordKey, String userId);
-	
 	int countRecord(int tapeKey);
 	
 	List<RecordDto> userLikeRecord(String userId);

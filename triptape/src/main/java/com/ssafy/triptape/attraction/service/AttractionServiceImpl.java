@@ -81,18 +81,16 @@ public class AttractionServiceImpl implements AttractionService {
 	}
 
 	@Override
+	@Transactional
 	public int likeAttraction(int attractionKey, String userId) {
 		return repo.likeAttraction(attractionKey, userId);
 	}
 
 	@Override
+	@Transactional
 	public int dislikeAttraction(int attractionKey, String userId) {
 		return repo.dislikeAttraction(attractionKey, userId);
 	}
 
-	@Override
-	public boolean isLikeAttraction(int attractionKey, String userId) {
-		return repo.isLikeAttraction(attractionKey, userId);
-	}
 
 }

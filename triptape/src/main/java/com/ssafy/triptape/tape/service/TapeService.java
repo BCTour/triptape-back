@@ -24,7 +24,6 @@ public interface TapeService {
 	
 	int likeTape(int tapeKey, String userId);
 	int dislikeTape(int tapeKey, String userId);
-	boolean isLikeTape(int tapeKey, String userId);
 
 	List<TapeDto> attractionTape(int attractionKey);
 }

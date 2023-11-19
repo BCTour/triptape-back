@@ -117,11 +117,6 @@
 	<delete id="dislikeRecord">
 		delete from user_like_record where user_id=#{userId} and tape_key=#{tapeKey} and record_key=#{recordKey}
 	</delete>
-	
-	<select id="isLikeRecord" resultType="boolean">
-		select count(*) from user_like_record
-		where user_id= #{userId} and tape_key= #{tapeKey} and record_key=#{recordKey}
-	</select>
 
 	<select id = "userLikeRecord" resultMap="record">
 		select a.*, c.*, d.* from record a

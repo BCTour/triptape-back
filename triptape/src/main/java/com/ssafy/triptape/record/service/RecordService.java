@@ -18,5 +18,4 @@ public interface RecordService {
 	int modifyRecord(RecordDto record, MultipartFile file) throws IllegalStateException, IOException;
 	int likeRecord(int tapeKey, int recordKey, String userId);
 	int dislikeRecord(int tapeKey, int recordKey, String userId);
-	boolean isLikeRecord(int tapeKey, int recordKey, String userId);
 }

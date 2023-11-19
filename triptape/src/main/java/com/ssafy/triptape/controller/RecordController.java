@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -314,12 +315,6 @@ public class RecordController {
 		}
 		
 		try {
-			
-			if(service.isLikeRecord(tapeKey, recordKey, userId)) {
-				resultMap.put("message", "이미 좋아요를 하였습니다.");
-				return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.CONFLICT);
-			}
-			
 			int result = service.likeRecord(tapeKey, recordKey, userId);
 			if(result == 1) {
 				status = HttpStatus.CREATED;
@@ -329,7 +324,11 @@ public class RecordController {
 				status = HttpStatus.NO_CONTENT;
 				return new ResponseEntity<Map<String, Object>>(resultMap, status);
 			}
-		} catch(Exception e) {
+		} catch(DuplicateKeyException e) {
+			resultMap.put("message", "이미 좋아요를 하였습니다.");
+			return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.CONFLICT);	
+		}
+		catch(Exception e) {
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
 			return new ResponseEntity<String>(e.getMessage(), status);
 		}

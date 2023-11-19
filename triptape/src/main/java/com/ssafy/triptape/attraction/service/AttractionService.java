@@ -21,5 +21,4 @@ public interface AttractionService {
 	
 	int likeAttraction(int attractionKey, String userId);
 	int dislikeAttraction(int attractionKey, String userId);
-	boolean isLikeAttraction(int attractionKey, String userId);
 }

@@ -75,7 +75,7 @@ public class AttractionCommentController {
 		try {
 			int result = service.regist(comment);
 			if(result==1) return new ResponseEntity<Void>(HttpStatus.CREATED);
-			else return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
+			else return new ResponseEntity<String>("반환할 데이터가 없습니다.", HttpStatus.NO_CONTENT);
 		} catch(Exception e) {
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -208,7 +208,7 @@ public class AttractionCommentController {
 		try {
 			int result = service.delete(commentKey);
 			if(result==1) return new ResponseEntity<Void>(HttpStatus.OK);
-			else return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
+			else return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
 		} catch(Exception e) {
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}

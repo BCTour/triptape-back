@@ -13,4 +13,8 @@ public interface UserListService {
 	List<AttractionDto> userLikeAttraction(String userId);
 	int userReportAttraction(String userId, int attarctionKey);
 	List<AttractionDto> searchReportAttraction(int reportCount);
+	
+	boolean isUserLikeAttraction(String userId, int attractionKey);
+	boolean isUserLikeRecord(String userId, int recordKey, int tapeKey);
+	boolean isUserLikeTape(String userId, int tapeKey);
 }

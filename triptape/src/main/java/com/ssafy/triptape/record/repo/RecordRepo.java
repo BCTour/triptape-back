@@ -22,5 +22,5 @@ public interface RecordRepo {
 	int countRecord(int tapeKey);
 	
 	List<RecordDto> userLikeRecord(String userId);
-
+	boolean isUserLikeRecord(String userId, int recordKey, int tapeKey);
 }

@@ -111,6 +111,11 @@
 		 where b.user_id = #{userId} 
 	</select>
 	
+	<select id="isUserLikeAttraction" resultType="boolean">
+		select count(1) from user_like_attraction
+		 where user_id = #{userId} and attraction_key=#{attractionKey}
+	</select>
+	
 	<insert id="userReportAttraction">
 		insert into user_report_attraction values(#{userId}, #{attractionKey});
 	</insert>
@@ -133,7 +138,6 @@
 		  		 group by attraction_key) b on a.attraction_key = b.attraction_key
 		 where b.report >= ${n}
 		 order by b.report desc
-		
 	</select>
 	
 </mapper>

@@ -28,4 +28,5 @@ public interface TapeRepo {
 	List<TapeDto> userJoinTape(String userId);
 	List<TapeDto> userLikeTape(String userId);
 	
+	boolean isUserLikeTape(String userId, int tapeKey);
 }

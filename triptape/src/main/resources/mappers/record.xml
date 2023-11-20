@@ -126,4 +126,9 @@
 	    where b.user_id = #{userId}
 	    order by a.createtime
 	</select>
+	
+	<select id="isUserLikeRecord" resultType="boolean">
+		select count(1) from user_like_record
+		 where user_id = #{userId} and tape_key=#{tapeKey} and record_key = #{recordKey}
+	</select>
 </mapper>

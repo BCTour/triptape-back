@@ -55,4 +55,18 @@ public class UserListServiceImpl implements UserListService {
 		return attractionRepo.searchReportAttraction(reportCount);
 	}
 
+	@Override
+	public boolean isUserLikeAttraction(String userId, int attractionKey) {
+		return attractionRepo.isUserLikeAttraction(userId, attractionKey);
+	}
+
+	@Override
+	public boolean isUserLikeRecord(String userId, int recordKey, int tapeKey) {
+		return recordRepo.isUserLikeRecord(userId, recordKey, tapeKey);
+	}
+
+	@Override
+	public boolean isUserLikeTape(String userId, int tapeKey) {
+		return tapeRepo.isUserLikeTape(userId, tapeKey);
+	}
 }

@@ -142,4 +142,8 @@
 		 order by a.createtime desc
 	</select>
 
+	<select id="isUserLikeTape" resultType="boolean">
+		select count(1) from user_like_tape
+		 where user_id = #{userId} and tape_key=#{tapeKey}
+	</select>
 </mapper>

@@ -71,8 +71,8 @@ public class RecordController {
 			status = HttpStatus.FORBIDDEN;
 			return new ResponseEntity<Map<String, Object>>(resultMap, status);
 		}
-		
 		try {
+			
 			int result = service.registRecord(record, file);
 			if(result == 1) {
 				tapeService.updateJoin(record.getTapeKey());
@@ -80,6 +80,7 @@ public class RecordController {
 			}
 			else return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
 		} catch(Exception e) {
+			e.printStackTrace();
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -116,7 +117,7 @@ public class RecordController {
 	}
 
 	@GetMapping("/search/{tapeKey}")
-	@ApiOperation(value="레코드에 포함된 장소들 목록을 조회합니다.")
+	@ApiOperation(value="레코드를 조회합니다.")
 	public ResponseEntity<?> searchRecord(
 			@PathVariable int tapeKey, @RequestParam(required=false)String keyword,@RequestParam(required=false) String word, @RequestParam int currentPage) {
 		
@@ -126,13 +127,13 @@ public class RecordController {
 		try {
 			int countPerPage = 10;
 			int start = (currentPage - 1) * countPerPage;
-			List<RecordDto> attractionList = service.searchRecord(tapeKey, keyword, word, start, countPerPage);
-			if(attractionList == null || attractionList.size() == 0) {
+			List<RecordDto> record = service.searchRecord(tapeKey, keyword, word, start, countPerPage);
+			if(record == null || record.size() == 0) {
 				message = "조회할 데이터가 없습니다.";
 				status = HttpStatus.NO_CONTENT;
 				resultMap.put("message", message);
 			} else {
-				resultMap.put("attraction", attractionList);
+				resultMap.put("record", record);
 				status = HttpStatus.OK;
 			}
 		} catch(Exception e) {

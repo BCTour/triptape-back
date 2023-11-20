@@ -49,7 +49,6 @@ public class BannerController {
 		
 		Map<String, Object> resultMap = new HashMap<>();
 		HttpStatus status = HttpStatus.ACCEPTED;
-		
 		String token = request.getHeader("Authorization");
 		
 		if(!jwtUtil.checkToken(token)) {

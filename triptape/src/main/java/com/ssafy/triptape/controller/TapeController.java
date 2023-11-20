@@ -196,7 +196,7 @@ public class TapeController {
 				status = HttpStatus.NO_CONTENT;
 				resultMap.put("message", message);
 			} else {
-				service.updateView(tapeKey);
+				service.updateView(tapeKey);s
 				resultMap.put("tape", tape);
 				status = HttpStatus.OK;
 			}

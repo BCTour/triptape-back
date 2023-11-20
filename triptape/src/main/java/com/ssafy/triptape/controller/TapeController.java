@@ -81,6 +81,7 @@ public class TapeController {
 			if(result == 1) return new ResponseEntity<Void>(HttpStatus.CREATED);
 			else return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
 		} catch(Exception e) {
+			e.printStackTrace();
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -109,6 +110,7 @@ public class TapeController {
 			message = e.getMessage();
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
 			resultMap.put("message", message);
+			e.printStackTrace();
 		}
 		return new ResponseEntity<Map<String, Object>>(resultMap, status);
 	}
@@ -134,6 +136,7 @@ public class TapeController {
 			message = e.getMessage();
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
 			resultMap.put("message", message);
+			e.printStackTrace();
 		}
 		return new ResponseEntity<Map<String, Object>>(resultMap, status);
 	}
@@ -170,6 +173,7 @@ public class TapeController {
 			message = e.getMessage();
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
 			resultMap.put("message", message);
+			e.printStackTrace();
 		}
 		return new ResponseEntity<Map<String, Object>>(resultMap, status);
 	}
@@ -199,6 +203,7 @@ public class TapeController {
 			message = e.getMessage();
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
 			resultMap.put("message", message);
+			e.printStackTrace();
 		}
 		return new ResponseEntity<Map<String, Object>>(resultMap, status);
 	}
@@ -253,6 +258,7 @@ public class TapeController {
 				resultMap.put("message", message);
 			}
 		} catch(Exception e) {
+			e.printStackTrace();
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
 			message = e.getMessage();
 		}
@@ -308,6 +314,7 @@ public class TapeController {
 			}
 		} catch(Exception e) {
 			resultMap.put("message", e.getMessage());
+			e.printStackTrace();
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
 		}
 		
@@ -350,6 +357,7 @@ public class TapeController {
 			return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.CONFLICT);
 		}
 		catch(Exception e) {
+			e.printStackTrace();
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
 			return new ResponseEntity<String>(e.getMessage(), status);
 		}
@@ -386,6 +394,7 @@ public class TapeController {
 				return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.NO_CONTENT);
 			}
 		} catch(Exception e) {
+			e.printStackTrace();
 			resultMap.put("message",e.getMessage());
 			return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -410,6 +419,7 @@ public class TapeController {
 			}
 			
 		} catch(Exception e) {
+			e.printStackTrace();
 			resultMap.put("message", e.getMessage());
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
 		}

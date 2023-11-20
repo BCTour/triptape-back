@@ -75,6 +75,7 @@ public class UseInfoController {
 		} catch(Exception e) {
 			resultMap.put("message", e.getMessage());
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
+			e.printStackTrace();
 		}
 		return new ResponseEntity<Map<String, Object>>(resultMap, status);
 	}
@@ -119,6 +120,7 @@ public class UseInfoController {
 		catch(Exception e) {
 			resultMap.put("message", e.getMessage());
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
+			e.printStackTrace();
 		}
 		return new ResponseEntity<Map<String, Object>>(resultMap, status);
 	}
@@ -166,6 +168,7 @@ public class UseInfoController {
 		} catch(Exception e) {
 			resultMap.put("message", e.getMessage());
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
+			e.printStackTrace();
 		}
 		return new ResponseEntity<Map<String, Object>>(resultMap, status);
 	}
@@ -205,6 +208,7 @@ public class UseInfoController {
 		} catch(Exception e) {
 			resultMap.put("message", e.getMessage());
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
+			e.printStackTrace();
 		}
 		return new ResponseEntity<Map<String, Object>>(resultMap, status);
 	}
@@ -244,6 +248,7 @@ public class UseInfoController {
 		} catch(Exception e) {
 			resultMap.put("message", e.getMessage());
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
+			e.printStackTrace();
 		}
 		return new ResponseEntity<Map<String, Object>>(resultMap, status);
 	}
@@ -283,6 +288,7 @@ public class UseInfoController {
 		} catch(Exception e) {
 			resultMap.put("message", e.getMessage());
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
+			e.printStackTrace();
 		}
 		return new ResponseEntity<Map<String, Object>>(resultMap, status);
 	}

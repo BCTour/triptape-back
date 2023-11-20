@@ -77,6 +77,7 @@ public class AttractionCommentController {
 			if(result==1) return new ResponseEntity<Void>(HttpStatus.CREATED);
 			else return new ResponseEntity<String>("반환할 데이터가 없습니다.", HttpStatus.NO_CONTENT);
 		} catch(Exception e) {
+			e.printStackTrace();
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -105,6 +106,7 @@ public class AttractionCommentController {
 				status = HttpStatus.NO_CONTENT;
 			}
 		} catch(Exception e) {
+			e.printStackTrace();
 			result.put("message", e.getMessage());
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
 		}
@@ -161,6 +163,7 @@ public class AttractionCommentController {
 				status = HttpStatus.NO_CONTENT;
 			}
 		} catch(Exception e) {
+			e.printStackTrace();
 			resultMap.put("message", e.getMessage());
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
 		}
@@ -210,6 +213,7 @@ public class AttractionCommentController {
 			if(result==1) return new ResponseEntity<Void>(HttpStatus.OK);
 			else return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
 		} catch(Exception e) {
+			e.printStackTrace();
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	

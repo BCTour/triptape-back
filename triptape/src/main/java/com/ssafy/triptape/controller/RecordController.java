@@ -109,6 +109,7 @@ public class RecordController {
 				status = HttpStatus.OK;
 			}
 		} catch(Exception e) {
+			e.printStackTrace();
 			message = e.getMessage();
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
 			resultMap.put("message", message);
@@ -138,6 +139,7 @@ public class RecordController {
 			}
 		} catch(Exception e) {
 			message = e.getMessage();
+			e.printStackTrace();
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
 			resultMap.put("message", message);
 		}
@@ -168,6 +170,7 @@ public class RecordController {
 			}
 		} catch(Exception e) {
 			message = e.getMessage();
+			e.printStackTrace();
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
 			resultMap.put("message", message);
 		}
@@ -226,6 +229,7 @@ public class RecordController {
 				resultMap.put("message", message);
 			}
 		} catch(Exception e) {
+			e.printStackTrace();
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
 			message = e.getMessage();
 		}
@@ -285,6 +289,7 @@ public class RecordController {
 			}
 		} catch(Exception e) {
 			message = e.getMessage();
+			e.printStackTrace();
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
 		}
 		return new ResponseEntity<String>(message, status);
@@ -330,6 +335,7 @@ public class RecordController {
 			return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.CONFLICT);	
 		}
 		catch(Exception e) {
+			e.printStackTrace();
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
 			return new ResponseEntity<String>(e.getMessage(), status);
 		}
@@ -370,6 +376,7 @@ public class RecordController {
 				return new ResponseEntity<Map<String, Object>>(resultMap, status);
 			}
 		} catch(Exception e) {
+			e.printStackTrace();
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
 			return new ResponseEntity<String>(e.getMessage(), status);
 		}

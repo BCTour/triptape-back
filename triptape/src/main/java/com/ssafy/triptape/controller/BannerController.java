@@ -78,6 +78,7 @@ public class BannerController {
 			return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.CONFLICT);
 		}
 		catch(Exception e) {
+			e.printStackTrace();
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -100,6 +101,7 @@ public class BannerController {
 			}
 		} 
 		catch(Exception e) {
+			e.printStackTrace();
 			resultMap.put("message",e.getMessage());
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
 		}
@@ -145,6 +147,7 @@ public class BannerController {
 			return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.CONFLICT);
 		}
 		catch(Exception e) {
+			e.printStackTrace();
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -182,6 +185,7 @@ public class BannerController {
 			if(result==1) return new ResponseEntity<Void>(HttpStatus.OK);
 			else return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
 		} catch(Exception e) {
+			e.printStackTrace();
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}

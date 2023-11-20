@@ -77,6 +77,7 @@ public class AttractionController {
 				return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.NO_CONTENT);
 			}
 		} catch(Exception e) {
+			e.printStackTrace();
 			resultMap.put("message", e.getMessage());
 			return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -104,6 +105,7 @@ public class AttractionController {
 				status = HttpStatus.NO_CONTENT;
 			}
 		} catch(Exception e) {
+			e.printStackTrace();
 			result.put("message", e.getMessage());
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
 		}
@@ -126,6 +128,7 @@ public class AttractionController {
 				status = HttpStatus.NO_CONTENT;
 			}
 		} catch(Exception e) {
+			e.printStackTrace();
 			result.put("message", e.getMessage());
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
 		}
@@ -149,6 +152,7 @@ public class AttractionController {
 				status = HttpStatus.NO_CONTENT;
 			}
 		} catch(Exception e) {
+			e.printStackTrace();
 			result = e.getMessage();
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
 		}
@@ -205,6 +209,7 @@ public class AttractionController {
 				status = HttpStatus.NO_CONTENT;
 			}
 		} catch(Exception e) {
+			e.printStackTrace();
 			resultMap.put("message", e.getMessage());
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
 		}
@@ -255,6 +260,7 @@ public class AttractionController {
 			if(result==1) return new ResponseEntity<Void>(HttpStatus.OK);
 			else return new ResponseEntity<String>("반환할 데이터가 없습니다.", HttpStatus.NO_CONTENT);
 		} catch(Exception e) {
+			e.printStackTrace();
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
@@ -297,6 +303,7 @@ public class AttractionController {
 			return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.CONFLICT);
 		}
 		catch(Exception e) {
+			e.printStackTrace();
 			resultMap.put("message",e.getMessage());
 			return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -334,6 +341,7 @@ public class AttractionController {
 				return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.NO_CONTENT);
 			}
 		} catch(Exception e) {
+			e.printStackTrace();
 			resultMap.put("message",e.getMessage());
 			return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.INTERNAL_SERVER_ERROR);
 		}

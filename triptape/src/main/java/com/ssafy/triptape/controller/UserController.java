@@ -74,6 +74,7 @@ public class UserController {
 			message = e.getMessage();
 		} catch(Exception e) {
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
+			e.printStackTrace();
 			message = e.getMessage();
 		}
 
@@ -116,6 +117,7 @@ public class UserController {
 			}
 		} catch(Exception e) {
 			resultMap.put("message", e.getMessage());
+			e.printStackTrace();
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
 		}
 		return new ResponseEntity<Map<String, Object>>(resultMap, status);
@@ -155,6 +157,7 @@ public class UserController {
 		} catch (Exception e) {
 			resultMap.put("message", e.getMessage());
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
+			e.printStackTrace();
 		} 
 		
 		return new ResponseEntity<Map<String, Object>>(resultMap, status);
@@ -207,6 +210,7 @@ public class UserController {
 		} catch (Exception e) {
 			resultMap.put("message", e.getMessage());
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
+			e.printStackTrace();
 		}
 		return new ResponseEntity<Map<String, Object>>(resultMap, status);
 	}
@@ -243,6 +247,7 @@ public class UserController {
 		} catch (Exception e) {
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
 			resultMap.put("message", e.getMessage());
+			e.printStackTrace();
 		}
 		
 		return new ResponseEntity<Map<String, Object>>(resultMap, status);
@@ -281,6 +286,7 @@ public class UserController {
 		} catch (Exception e) {
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
 			resultMap.put("message", e.getMessage());
+			e.printStackTrace();
 		}
 		
 		return new ResponseEntity<Map<String, Object>>(resultMap, status);
@@ -304,6 +310,7 @@ public class UserController {
 		} catch(Exception e) {
 			resultMap.put("message", e.getMessage());
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
+			e.printStackTrace();
 		}
 		return new ResponseEntity<Map<String, Object>>(resultMap, status);
 	}
@@ -327,6 +334,7 @@ public class UserController {
 		} catch(Exception e) {
 			resultMap.put("message", e.getMessage());
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
+			e.printStackTrace();
 		}
 		return new ResponseEntity<Map<String, Object>>(resultMap, status);
 	}

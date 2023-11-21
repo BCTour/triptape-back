@@ -81,6 +81,7 @@ public class UserController {
 		return new ResponseEntity<String>(message, status);
 	}
 	
+	
 	@PostMapping(value ="/login")
 	@ApiOperation("로그인을 진행합니다.")
 	public ResponseEntity<?> login(@RequestBody UserDto user) {
@@ -196,6 +197,20 @@ public class UserController {
 		return new ResponseEntity<Map<String, Object>>(resultMap, status);
 		
 	}
+	
+	@GetMapping(value="/check/token")
+	@ApiOperation("토큰의 유효성을 확인합니다.")
+	public ResponseEntity<?> checkToken(HttpServletRequest request) {
+		
+		String token = request.getHeader("Authorization");
+
+		if (jwtUtil.checkToken(token)) {
+			return new ResponseEntity<Void>(HttpStatus.OK);
+		} else {
+			return new ResponseEntity<Void>(HttpStatus.UNAUTHORIZED);
+		}
+	}
+	
 	
 	@ApiOperation(value = "로그아웃", notes = "회원 정보를 담은 Token을 제거한다.")
 	@GetMapping("/logout/{userId}")

@@ -293,19 +293,23 @@ public class UserController {
 	}
 	
 	@GetMapping("/findpw")
-	public ResponseEntity<?> emailCheck(@RequestParam String email) {
+	public ResponseEntity<?> emailCheck(@RequestParam String email, @RequestParam String userId) {
 			
 		HttpStatus status = HttpStatus.ACCEPTED;
 		Map<String, Object> resultMap = new HashMap<>();
 		try {
-			UserDto user = service.searchByEmail(email);
-			if(user != null) {
+			UserDto user = service.userInfo(userId);
+			if(user == null) {
+				resultMap.put("message", "존재하지 않는 아이디입니다.");
+				status = HttpStatus.NOT_FOUND;
+			}
+			else if(!user.getEmail().equals(email)) {
+				resultMap.put("message", "이메일이 일치하지 않습니다.");
+				status = HttpStatus.UNAUTHORIZED;
+			} else {	
 				String code = emailService.sendSimpleMessage(email);
 				resultMap.put("code", code);
 				status = HttpStatus.OK;
-			} else {
-				resultMap.put("message", "존재하지 않는 이메일입니다");
-				status = HttpStatus.UNAUTHORIZED;
 			}
 		} catch(Exception e) {
 			resultMap.put("message", e.getMessage());
@@ -322,13 +326,13 @@ public class UserController {
 		HttpStatus status = HttpStatus.ACCEPTED;
 		Map<String, Object> resultMap = new HashMap<>();
 		try {
-			UserDto userInfo = service.searchByEmail(user.getEmail());
-			if(userInfo != null) {
-				service.updatePw(userInfo.getUserId(), user.getUserPw());
+//			UserDto userInfo = service.searchByEmail(user.getEmail());
+			if(user != null) {
+				service.updatePw(user.getUserId(), user.getUserPw());
 				resultMap.put("message", "비밀번호 재설정을 완료하였습니다.");
 				status = HttpStatus.OK;
 			} else {
-				resultMap.put("message", "존재하지 않는 이메일입니다");
+				resultMap.put("message", "존재하지 않는 아이디입니다.");
 				status = HttpStatus.UNAUTHORIZED;
 			}
 		} catch(Exception e) {

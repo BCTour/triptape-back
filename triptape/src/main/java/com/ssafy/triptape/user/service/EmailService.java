@@ -54,7 +54,7 @@ public class EmailService {
     public static String createKey() {
         StringBuffer key = new StringBuffer();
         Random rnd = new Random();
-
+        rnd.setSeed(System.currentTimeMillis());
         for (int i = 0; i < 6; i++) { // 인증코드 6자리
             key.append((rnd.nextInt(10)));
         }

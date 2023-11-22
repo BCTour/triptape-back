@@ -25,5 +25,5 @@ public interface UserRepo {
 	
 	int withdrawal(WithdrawalsDto withdrawalsDto);
 	int isState(String userId, String userPw, int isState);
-	boolean selectIsState(String userId, String userPw);
+	UserDto selectIsState(String userId, String userPw);
 }

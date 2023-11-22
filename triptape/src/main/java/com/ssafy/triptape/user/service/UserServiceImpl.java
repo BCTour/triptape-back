@@ -63,7 +63,6 @@ public class UserServiceImpl implements UserService {
 		}
 		String hashPass = BCrypt.hashpw(pw, salt);
 		
-		if(repo.selectIsState(userId, hashPass)) return null;
 		return repo.login(userId, hashPass);
 	}
 

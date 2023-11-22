@@ -11,6 +11,7 @@
 		<result property="gender" column="gender"/>
 		<result property="joindate" column="joindate" />
 		<result property="isAdmin" column="is_admin" />
+		<result property="isState" column="is_state"/>
 		<association property="profileImg" javaType="com.ssafy.triptape.file.FileInfoDto">
 			<result column="profile_img" property="saveFile" />
 		</association>
@@ -24,7 +25,7 @@
 	</insert>
 	
 	<select id="login" resultMap="user">
-		select user_id, user_name, is_admin from user where user_id = #{userId} and user_pw = #{userPw}
+		select user_id, user_name, is_admin, is_state from user where user_id = #{userId} and user_pw = #{userPw}
 	</select>
 	
 	<select id="getSalt" resultType="String">
@@ -85,9 +86,7 @@
 		 where user_id = #{userId} and user_pw = #{userPw}
 	</update>
 	
-	<select id="selectIsState" resultType="boolean">
-		select is_state
-		  from user
-		 where where user_id = #{userId} and user_pw = #{userPw}
+	<select id="selectIsState" resultMap="user">
+		select is_state where user_id = #{userId} and user_pw = #{userPw}
 	</select>
 </mapper>

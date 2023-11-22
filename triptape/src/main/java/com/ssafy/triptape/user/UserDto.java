@@ -50,4 +50,7 @@ public class UserDto {
 	
 	@ApiModelProperty(value="관리자여부")
 	private int isAdmin;
+	
+	@ApiModelProperty(value="활성여부")
+	private int isState;
 }

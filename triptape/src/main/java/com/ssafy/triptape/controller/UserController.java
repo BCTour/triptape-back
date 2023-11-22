@@ -100,7 +100,7 @@ public class UserController {
 				service.deleteRefreshToken(user.getUserId());
 			}
 			
-			if(loginUser != null) {
+			if(loginUser != null && loginUser.getIsState() == 0) {
 
 				String accessToken = jwtUtil.createAccessToken(loginUser.getIsAdmin(), loginUser.getUserId());
 				String refreshToken = jwtUtil.createRefreshToken(loginUser.getIsAdmin(), loginUser.getUserId());
@@ -258,7 +258,7 @@ public class UserController {
 			}
 			else {
 				resultMap.put("message", "아이디 또는 패스워드를 확인해주세요.");
-				status = HttpStatus.UNAUTHORIZED;
+				status = HttpStatus.FORBIDDEN;
 			}
 		} catch (Exception e) {
 			status = HttpStatus.INTERNAL_SERVER_ERROR;

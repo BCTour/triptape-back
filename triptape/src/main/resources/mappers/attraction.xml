@@ -51,8 +51,16 @@
 		values(#{attractionType.typeCode}, #{name}, #{address}, #{latitude}, #{longitude}, #{description}, #{img.saveFile}, #{userId})
 	</insert>
 
+	<sql id="popularSql">
+		select attraction_key, count(*) 'popular'
+		  from user_like_attraction
+		 group by attraction_key
+	</sql>
+
 	<select id="search" resultMap="attraction">
-		select  * from attraction_info a join attraction_type b on a.type_code = b.type_code
+		select  * from attraction_info a 
+				  join attraction_type b on a.type_code = b.type_code
+				  left outer join (<include refid="popularSql" />) c on a.attraction_key = c.attraction_key
 		<where>
 			<include refid="condition" ></include>
 		</where>
@@ -66,7 +74,9 @@
 	</select>
 	
 	<select id="info" resultMap="attraction">
-		select  * from attraction_info a join attraction_type b on a.type_code = b.type_code
+		select  * from attraction_info a 
+				  join attraction_type b on a.type_code = b.type_code
+				  left outer join (<include refid="popularSql" />) c on a.attraction_key = c.attraction_key
 		where a.attraction_key = #{attractionKey}
 	</select>
 	
@@ -123,9 +133,7 @@
 	<select id="popularAttraction" resultMap="attraction">
 		select * 
 		  from attraction_info a
-		  join (select attraction_key, count(*) 'popular'
-		   		  from user_like_attraction
-		  		 group by attraction_key) b on a.attraction_key = b.attraction_key
+		  join (<include refid="popularSql" />) b on a.attraction_key = b.attraction_key
 		 order by b.popular desc
 		 limit ${n}
 	</select>

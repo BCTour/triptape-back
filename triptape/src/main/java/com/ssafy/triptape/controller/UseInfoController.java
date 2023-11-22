@@ -11,6 +11,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -116,6 +117,47 @@ public class UseInfoController {
 		} catch(DuplicateKeyException e) {
 			resultMap.put("message", "이미 신고하였습니다.");
 			status = HttpStatus.CONFLICT;
+		}
+		catch(Exception e) {
+			resultMap.put("message", e.getMessage());
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
+			e.printStackTrace();
+		}
+		return new ResponseEntity<Map<String, Object>>(resultMap, status);
+	}
+	
+	@DeleteMapping("/delete/report/attraction/{attractionKey}/{userId}")
+	@ApiOperation("문제있는 관광지 신고 취고")
+	public ResponseEntity<?> userDeleteReportAttraction(
+			@PathVariable int attractionKey,
+			@PathVariable String userId,
+			HttpServletRequest request){
+		Map<String, Object> resultMap = new HashMap<>();
+		HttpStatus status = HttpStatus.ACCEPTED;
+		
+		String token = request.getHeader("Authorization");
+		
+		if(!jwtUtil.checkToken(token)) {
+			resultMap.put("message", "사용불가능한 토큰입니다.");
+			status = HttpStatus.UNAUTHORIZED;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
+
+		if(!jwtUtil.getUserId(token).equals(userId)) {
+			resultMap.put("message", "사용자 정보가 일치하지 않습니다.");
+			status = HttpStatus.FORBIDDEN;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
+		
+		try {
+			int result = service.userDeleteReportAttraction(userId, attractionKey);
+			if(result == 1) {
+				status = HttpStatus.OK;
+				return new ResponseEntity<>(status);
+			} else {
+				resultMap.put("message", "삭제할 내용이 없습니다.");
+				status = HttpStatus.NO_CONTENT;
+			}
 		}
 		catch(Exception e) {
 			resultMap.put("message", e.getMessage());
@@ -392,6 +434,41 @@ public class UseInfoController {
 		
 		try {
 			boolean result = service.isUserLikeRecord(userId, recordKey, tapeKey);
+			return new ResponseEntity<Boolean>(result, HttpStatus.OK);
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			resultMap.put("message",e.getMessage());
+			return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+	}
+	@GetMapping("/isReport/attraction")
+	@ApiOperation("관광지 신고 여부 확인")
+	public ResponseEntity<?> isUserReportAttraction(
+			@RequestParam int attractionKey, 
+			@RequestParam String userId,
+			HttpServletRequest request){
+
+		String token = request.getHeader("Authorization");
+		Map<String, Object> resultMap = new HashMap<>();
+		HttpStatus status = HttpStatus.ACCEPTED;
+		
+		
+		if(!jwtUtil.checkToken(token)) {
+			resultMap.put("message", "사용불가능한 토큰입니다.");
+			status = HttpStatus.UNAUTHORIZED;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
+
+		if(!jwtUtil.getUserId(token).equals(userId)) {
+			resultMap.put("message", "사용자 정보가 일치하지 않습니다.");
+			status = HttpStatus.FORBIDDEN;
+			return new ResponseEntity<Map<String, Object>>(resultMap, status);
+		}
+		
+		try {
+			boolean result = service.isUserReportAttraction(userId, attractionKey);
 			return new ResponseEntity<Boolean>(result, HttpStatus.OK);
 		}
 		catch(Exception e) {

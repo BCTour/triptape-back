@@ -69,4 +69,14 @@ public class UserListServiceImpl implements UserListService {
 	public boolean isUserLikeTape(String userId, int tapeKey) {
 		return tapeRepo.isUserLikeTape(userId, tapeKey);
 	}
+
+	@Override
+	public boolean isUserReportAttraction(String userId, int attractionKey) {
+		return attractionRepo.isUserReportAttraction(userId, attractionKey);
+	}
+
+	@Override
+	public int userDeleteReportAttraction(String userId, int attractionKey) {
+		return attractionRepo.userDeleteReportAttraction(userId, attractionKey);
+	}
 }

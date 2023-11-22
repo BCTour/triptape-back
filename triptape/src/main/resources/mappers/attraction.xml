@@ -130,6 +130,15 @@
 		insert into user_report_attraction values(#{userId}, #{attractionKey});
 	</insert>
 	
+	<delete id="userDeleteReportAttraction">
+		delete from user_report_attraction where user_id = #{userId} and attraction_key=#{attractionKey};
+	</delete>
+	
+	<select id="isUserReportAttraction" resultType="boolean">
+		select count(1) from user_report_attraction
+		 where user_id = #{userId} and attraction_key=#{attractionKey}
+	</select>
+	
 	<select id="popularAttraction" resultMap="attraction">
 		select * 
 		  from attraction_info a

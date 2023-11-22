@@ -21,6 +21,6 @@ public interface UserService {
 	int deleteUser(String userId, String userPw);
 	void updatePw(String userId, String userPw);
 	UserDto searchByEmail(String email);
-	
+
 	int withdrawals(WithdrawalsDto withdrawalsDto);
 }

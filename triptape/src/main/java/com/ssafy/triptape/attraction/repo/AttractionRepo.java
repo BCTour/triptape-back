@@ -31,6 +31,8 @@ public interface AttractionRepo {
 	List<AttractionDto> userLikeAttraction(String userId);
 	int userReportAttraction(String userId, int attractionKey);
 	boolean isUserLikeAttraction(String userId, int attractionKey);
+	boolean isUserReportAttraction(String userId, int attractionKey);
+	int userDeleteReportAttraction(String userId, int attractionKey);
 	
 	List<AttractionDto> popularAttraction(int n);
 	

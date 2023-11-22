@@ -74,6 +74,20 @@
 		 where user_id=#{userId}
 	</update>
 	
+	<insert id="withdrawal">
+		insert into withdrawals(user_id, withdrawal_reason)
+		values(#{userId},  #{withdrawalReason});
+	</insert>
 	
+	<update id="isState">
+		update user
+		   set is_state =#{isState}
+		 where user_id = #{userId} and user_pw = #{userPw}
+	</update>
 	
+	<select id="selectIsState" resultType="boolean">
+		select is_state
+		  from user
+		 where where user_id = #{userId} and user_pw = #{userPw}
+	</select>
 </mapper>

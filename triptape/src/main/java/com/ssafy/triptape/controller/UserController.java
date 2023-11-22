@@ -32,6 +32,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.ssafy.triptape.common.util.JWTUtil;
 import com.ssafy.triptape.user.UserDto;
+import com.ssafy.triptape.user.WithdrawalsDto;
 import com.ssafy.triptape.user.service.EmailService;
 import com.ssafy.triptape.user.service.UserService;
 
@@ -231,8 +232,8 @@ public class UserController {
 	}
 	
 	@ApiOperation(value ="회원 정보 삭제", notes = "회원 정보를 삭제한다.", response = Map.class)
-	@DeleteMapping("/delete")
-	public ResponseEntity<?> delete(HttpServletRequest request, @RequestBody UserDto user) {
+	@PutMapping("/delete")
+	public ResponseEntity<?> delete(HttpServletRequest request, @RequestBody WithdrawalsDto withdrawalsDto) {
 		HttpStatus status = HttpStatus.ACCEPTED;
 		Map<String, Object> resultMap = new HashMap<>();
 
@@ -243,14 +244,14 @@ public class UserController {
 			return new ResponseEntity<Map<String, Object>>(resultMap, status);
 		}
 		
-		if(!jwtUtil.getUserId(token).equals(user.getUserId())) {
+		if(!jwtUtil.getUserId(token).equals(withdrawalsDto.getUserId())) {
 			resultMap.put("message", "사용자 정보가 일치하지 않습니다.");
 			status = HttpStatus.FORBIDDEN;
 			return new ResponseEntity<Map<String, Object>>(resultMap, status);
 		}
 		
 		try {
-			int result = service.deleteUser(user.getUserId(), user.getUserPw());
+			int result = service.withdrawals(withdrawalsDto);
 			if(result == 1) {
 				status = HttpStatus.OK;
 				return new ResponseEntity<>(status);

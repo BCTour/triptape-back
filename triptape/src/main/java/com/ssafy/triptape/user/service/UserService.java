@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.triptape.user.UserDto;
+import com.ssafy.triptape.user.WithdrawalsDto;
 
 public interface UserService {
 	int regist(UserDto user, MultipartFile file) throws IOException;
@@ -20,4 +21,6 @@ public interface UserService {
 	int deleteUser(String userId, String userPw);
 	void updatePw(String userId, String userPw);
 	UserDto searchByEmail(String email);
+	
+	int withdrawals(WithdrawalsDto withdrawalsDto);
 }

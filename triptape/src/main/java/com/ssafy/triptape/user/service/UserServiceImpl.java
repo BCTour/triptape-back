@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.triptape.file.FileInfoDto;
 import com.ssafy.triptape.user.UserDto;
+import com.ssafy.triptape.user.WithdrawalsDto;
 import com.ssafy.triptape.user.repo.UserRepo;
 
 @Service
@@ -61,6 +62,8 @@ public class UserServiceImpl implements UserService {
 			return null;
 		}
 		String hashPass = BCrypt.hashpw(pw, salt);
+		
+		if(repo.selectIsState(userId, hashPass)) return null;
 		return repo.login(userId, hashPass);
 	}
 
@@ -110,5 +113,15 @@ public class UserServiceImpl implements UserService {
 		String hashpw = BCrypt.hashpw(userPw, salt);
 
 		repo.updatePw(userId, hashpw, salt);
+	}
+
+	@Override
+	public int withdrawals(WithdrawalsDto withdrawalsDto) {
+		String salt = repo.getSalt(withdrawalsDto.getUserId());
+		String hashPass = BCrypt.hashpw(withdrawalsDto.getUserPw(), salt);
+
+		int result = repo.isState(withdrawalsDto.getUserId(),hashPass,1);
+		if(result != 1) return 0;
+		return repo.withdrawal(withdrawalsDto);
 	}
 }

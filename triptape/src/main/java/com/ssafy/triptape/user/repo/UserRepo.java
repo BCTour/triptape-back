@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.ssafy.triptape.user.UserDto;
+import com.ssafy.triptape.user.WithdrawalsDto;
 
 @Mapper
 public interface UserRepo {
@@ -21,4 +22,8 @@ public interface UserRepo {
 	int deleteUser(String userId, String userPw);
 	void updatePw(String userId, String userPw, String salt);
 	String getSalt(String userId);
+	
+	int withdrawal(WithdrawalsDto withdrawalsDto);
+	int isState(String userId, String userPw, int isState);
+	boolean selectIsState(String userId, String userPw);
 }

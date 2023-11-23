@@ -44,7 +44,7 @@
 	</resultMap>
 
 	<select id="getRecordKey" resultType="int">
-		select max(record_key) from record
+		select ifnull(max(record_key), 0) from record
 		where tape_key = #{tapeKey}
 	</select>
 
@@ -54,9 +54,9 @@
 	</insert>
 	
 	<sql id="likeNum">
-		select record_key, count(*) likeNum 
+		select tape_key, record_key, count(*) likeNum 
 		  from user_like_record
-		  group by record_key
+		  group by tape_key, record_key
 	</sql>
 	
 	<select id="recordAttraction" resultMap="attraction">
@@ -77,7 +77,7 @@
 		  left outer join user b 		   on a.user_id = b.user_id
 		  left outer join attraction_info c on a.attraction_key = c.attraction_key
 		  left outer join attraction_type d on c.type_code = d.type_code
-		  left outer join (<include refid="likeNum" />) e on a.record_key = e.record_key 
+		  left outer join (<include refid="likeNum" />) e on a.record_key = e.record_key and a.tape_key = e.tape_key
 		 where a.tape_key = #{tapeKey} 
 		<if test="keyword != null and !keyword.equals('') ">
 			and a.${keyword} like concat('%', #{word},'%')	
@@ -92,7 +92,7 @@
 		  left outer join user b 		   on a.user_id = b.user_id
 		  left outer join attraction_info c on a.attraction_key = c.attraction_key
 		  left outer join attraction_type d on c.type_code = d.type_code
-		  left outer join (<include refid="likeNum" />) e on a.record_key = e.record_key 
+		  left outer join (<include refid="likeNum" />) e on a.record_key = e.record_key and a.tape_key = e.tape_key
 		  where a.tape_key = ${tapeKey}
 		   and a.record_key = ${recordKey}
 	</select>

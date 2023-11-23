@@ -44,7 +44,7 @@ public class RecordServiceImpl implements RecordService {
 	@Transactional
 	public int registRecord(RecordDto record, MultipartFile file) throws IllegalStateException, IOException {
 		fileHandling(record,file);
-		int recordKey = repo.countRecord(record.getTapeKey());
+		int recordKey = repo.getRecordKey((record.getTapeKey()));
 		record.setRecordKey(recordKey + 1);
 		return repo.registRecord(record);
 	}

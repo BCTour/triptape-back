@@ -43,8 +43,8 @@
 		<collection property="user" resultMap="user" />
 	</resultMap>
 
-	<select id="countRecord">
-		select count(*) from record
+	<select id="getRecordKey" resultType="int">
+		select max(record_key) from record
 		where tape_key = #{tapeKey}
 	</select>
 
@@ -82,7 +82,7 @@
 		<if test="keyword != null and !keyword.equals('') ">
 			and a.${keyword} like concat('%', #{word},'%')	
 		</if>
-		order by a.createtime desc
+		order by a.createtime desc, a.record_key desc
 		limit ${start}, ${countPerPage}
 	</select>
 	
